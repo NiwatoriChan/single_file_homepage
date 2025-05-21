@@ -10,12 +10,6 @@
         /* Styles généraux */
         body {
             font-family: 'Inter', sans-serif; /* Police plus moderne */
-            /* Default light mode colors are set by Tailwind classes */
-        }
-        /* Base dark mode styles for body if html.dark is present */
-        .dark body {
-            background-color: #111827; /* Tailwind's bg-gray-900 */
-            color: #d1d5db; /* Tailwind's text-gray-300 */
         }
 
         /* Conteneur principal pour aligner les sections */
@@ -24,17 +18,10 @@
             flex-direction: column;
             align-items: center; /* Centre horizontalement */
             width: 100%;
-            max-width: 1024px; /* Default max-width */
+            max-width: 1024px; /* Augmenter la largeur max pour plus d'espace */
             margin: 0 auto; /* Centrer le conteneur */
-            padding: 0.5rem; /* p-2 for smallest screens */
+            padding: 1rem; /* Ajouter un peu de padding global */
         }
-        @media (min-width: 640px) { /* sm */
-            .main-container {
-                padding: 1rem; /* p-4 for sm and up */
-                max-width: 1280px; /* Increase max-width for larger screens */
-            }
-        }
-
 
         /* Section Widgets */
         .widgets-section {
@@ -49,12 +36,9 @@
              padding: 1rem; /* p-4 */
              box-shadow: 0 1px 3px rgba(0,0,0,0.1);
              border: 1px solid #e5e7eb; /* gray-200 */
+             /* min-height: 100px; Supprimé pour laisser le contenu dicter la hauteur */
              display: flex;
              flex-direction: column;
-        }
-        .dark .widget-card {
-            background-color: #1f2937; /* bg-gray-800 */
-            border-color: #374151; /* border-gray-700 */
         }
 
         /* Widget Horloge & Date */
@@ -70,42 +54,35 @@
             color: #1f2937; /* gray-800 */
             line-height: 1.1;
         }
-        .dark .clock-widget .time {
-            color: #f3f4f6; /* gray-100 */
-        }
         .clock-widget .date {
             font-size: 1rem; /* text-base */
             color: #4b5563; /* gray-600 */
-        }
-        .dark .clock-widget .date {
-            color: #9ca3af; /* gray-400 */
         }
 
         /* Widget Notes */
         .notes-widget {
              min-height: 150px; /* Donner un peu plus de hauteur min aux notes */
         }
-        .notes-widget textarea { /* Base styles for light mode */
-            flex-grow: 1;
+        .notes-widget textarea {
+            flex-grow: 1; /* Prendre l'espace disponible */
             border: 1px solid #d1d5db; /* gray-300 */
             border-radius: 0.375rem; /* rounded-md */
             padding: 0.5rem; /* p-2 */
             font-size: 0.875rem; /* text-sm */
             margin-bottom: 0.5rem; /* mb-2 */
-            resize: vertical;
-            min-height: 80px;
+            resize: vertical; /* Permettre redimensionnement vertical */
+            min-height: 80px; /* Hauteur minimale pour la zone de texte */
             outline: none;
-            /* Tailwind classes like dark:bg-gray-700 will override background for dark mode */
         }
-        .notes-widget textarea:focus { /* Light mode focus */
+        .notes-widget textarea:focus {
             border-color: #3b82f6; /* blue-500 */
             box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.3);
         }
-        .dark .notes-widget textarea:focus { /* Dark mode focus */
-            border-color: #3b82f6; /* blue-500 */
-            box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.4); /* Adjusted shadow for dark bg */
+        .notes-widget button {
+            padding: 0.3rem 0.8rem;
+            font-size: 0.75rem; /* text-xs */
+            align-self: flex-end; /* Aligner le bouton à droite */
         }
-        /* Save button styling is mostly via Tailwind classes on the element itself */
 
         /* Widget Météo (Iframe) */
         .weather-widget-container {
@@ -122,32 +99,17 @@
             flex-direction: column;
             align-items: center;
             justify-content: center;
-            padding: 0.5rem; /* p-2 for smallest */
+            padding: 1rem; /* 16px */
             background-color: #f9fafb; /* gray-50 */
             border: 1px solid #e5e7eb; /* gray-200 */
             border-radius: 0.5rem; /* rounded-lg */
             text-align: center;
-            transition: transform 0.2s ease, box-shadow 0.2s ease, opacity 0.2s ease, background-color 0.2s ease, border-color 0.2s ease;
+            transition: transform 0.2s ease, box-shadow 0.2s ease, opacity 0.2s ease;
             text-decoration: none;
             color: #1f2937; /* gray-800 */
-            overflow: hidden;
-            aspect-ratio: 1 / 1;
-            cursor: grab;
-        }
-        @media (min-width: 640px) { /* sm */
-            .quick-link {
-                padding: 0.75rem; /* p-3 for sm */
-            }
-        }
-        @media (min-width: 768px) { /* md */
-            .quick-link {
-                padding: 1rem; /* p-4 for md and up */
-            }
-        }
-        .dark .quick-link {
-            background-color: #374151; /* bg-gray-700 */
-            border-color: #4b5563; /* border-gray-600 */
-            color: #f3f4f6; /* text-gray-100 */
+            overflow: hidden; /* Pour le nom du lien */
+            aspect-ratio: 1 / 1; /* Pour rendre les tuiles carrées */
+            cursor: grab; /* Indiquer qu'il est déplaçable */
         }
         .quick-link:active {
             cursor: grabbing; /* Curseur pendant le déplacement */
@@ -157,19 +119,13 @@
             cursor: grabbing;
         }
         .quick-link.drag-over {
+             /* Optionnel: Ajouter un style pour indiquer la zone de drop */
              border: 2px dashed #3b82f6; /* blue-500 */
-        }
-        .dark .quick-link.drag-over {
-            border-color: #60a5fa; /* blue-400 for dark */
         }
 
         .quick-link:hover {
             transform: translateY(-2px);
             box-shadow: 0 4px 10px rgba(0,0,0,0.05);
-        }
-        .dark .quick-link:hover {
-            background-color: #4b5563; /* bg-gray-600 */
-            box-shadow: 0 4px 10px rgba(0,0,0,0.15); /* slightly more pronounced shadow */
         }
         .quick-link img.favicon, .quick-link .default-favicon-container {
             width: 2rem; /* 32px */
@@ -192,42 +148,28 @@
         }
         .delete-link-btn {
             position: absolute;
-            top: 1px; /* Adjusted for smaller screens */
-            right: 1px; /* Adjusted for smaller screens */
-            width: 1.5rem; /* w-6 */
-            height: 1.5rem; /* h-6 */
+            top: 2px;
+            right: 2px;
+            width: 1.25rem; /* 20px */
+            height: 1.25rem; /* 20px */
             background-color: rgba(239, 68, 68, 0.8); /* bg-red-500 avec transparence */
             color: white;
             border-radius: 50%;
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 0.75rem; /* text-xs */
+            font-size: 0.65rem; /* 10px */
             cursor: pointer;
-            opacity: 0;
-            transition: opacity 0.2s ease, background-color 0.2s ease;
-            z-index: 10;
-        }
-        @media (min-width: 640px) { /* sm */
-            .delete-link-btn {
-                top: 2px;
-                right: 2px;
-                width: 1.25rem; /* w-5 */
-                height: 1.25rem; /* h-5 */
-                font-size: 0.65rem; /* text-[10px] */
-            }
-        }
-        .dark .delete-link-btn {
-            background-color: rgba(239, 68, 68, 0.7); /* Less intense red on dark */
+            opacity: 0; /* Caché par défaut */
+            transition: opacity 0.2s ease;
+            z-index: 10; /* S'assurer qu'il est au-dessus */
+            /* Ne pas mettre pointer-events: none ici */
         }
         .quick-link:hover .delete-link-btn {
-            opacity: 1;
+            opacity: 1; /* Visible au survol du lien */
         }
         .delete-link-btn:hover {
              background-color: #dc2626; /* red-600 */
-        }
-        .dark .delete-link-btn:hover {
-            background-color: #ef4444; /* red-500 */
         }
 
         /* Style pour le bouton Ajouter */
@@ -236,7 +178,7 @@
             flex-direction: column;
             align-items: center;
             justify-content: center;
-            padding: 0.5rem; /* p-2 for smallest */
+            padding: 1rem; /* 16px */
             background-color: #ffffff; /* white */
             border: 2px dashed #d1d5db; /* gray-300 */
             border-radius: 0.5rem; /* rounded-lg */
@@ -244,40 +186,15 @@
             transition: border-color 0.2s ease, background-color 0.2s ease;
             cursor: pointer;
             color: #6b7280; /* gray-500 */
-            aspect-ratio: 1 / 1;
-        }
-         @media (min-width: 640px) { /* sm */
-            .add-link-button {
-                padding: 0.75rem; /* p-3 for sm */
-            }
-        }
-        @media (min-width: 768px) { /* md */
-            .add-link-button {
-                padding: 1rem; /* p-4 for md and up */
-            }
-        }
-        .dark .add-link-button {
-            background-color: #1f2937; /* bg-gray-800 */
-            border-color: #4b5563; /* gray-600 */
-            color: #9ca3af; /* gray-400 */
+            aspect-ratio: 1 / 1; /* Pour rendre la tuile carrée */
         }
         .add-link-button:hover {
             border-color: #9ca3af; /* gray-400 */
             background-color: #f9fafb; /* gray-50 */
         }
-        .dark .add-link-button:hover {
-            border-color: #6b7280; /* gray-500 */
-            background-color: #374151; /* bg-gray-700 */
-        }
         .add-link-button i {
-            font-size: 1.25rem; /* text-xl for smallest screens */
-            margin-bottom: 0.25rem; /* mb-1 */
-        }
-        @media (min-width: 640px) { /* sm */
-            .add-link-button i {
-                font-size: 1.5rem; /* text-2xl for sm and up */
-                margin-bottom: 0.5rem; /* mb-2 */
-            }
+            font-size: 1.5rem; /* 24px */
+            margin-bottom: 0.5rem; /* 8px */
         }
          .add-link-button span {
             font-size: 0.75rem; /* 12px */
@@ -285,100 +202,98 @@
         }
 
         /* Style pour le modal */
-        .modal { background-color: rgba(0, 0, 0, 0.5); } /* Backdrop for light mode */
-        .dark .modal { background-color: rgba(0, 0, 0, 0.7); } /* Darker backdrop for dark mode */
-
-        .modal-content { /* Light mode, bg is set by Tailwind .bg-white */
+        .modal { background-color: rgba(0, 0, 0, 0.5); }
+        .modal-content {
             max-width: 400px;
             width: 90%;
         }
-        /* Dark mode for modal content is handled by Tailwind dark:bg-gray-800 on the element */
 
-        /* Style pour la barre de recherche (Tailwind classes directly on elements are preferred) */
-        /* #searchForm input[type="text"] and button styles are mostly handled by Tailwind classes */
+        /* Style pour la barre de recherche */
+         #searchForm {
+             width: 100%; /* Prendre toute la largeur du conteneur */
+             max-width: 600px; /* Limiter la largeur max de la barre */
+             margin-left: auto; /* Centrer */
+             margin-right: auto; /* Centrer */
+             margin-bottom: 2rem; /* mb-8 */
+         }
+        #searchForm input[type="text"] {
+            border-top-right-radius: 0;
+            border-bottom-right-radius: 0;
+            border-right: none;
+        }
+        #searchForm button {
+            border-top-left-radius: 0;
+            border-bottom-left-radius: 0;
+        }
 
         /* Favicon par défaut (SVG simple) */
-        .default-favicon-container { /* Light mode */
+        .default-favicon-container {
             display: flex;
             align-items: center;
             justify-content: center;
             background-color: #e5e7eb; /* gray-200 */
             border-radius: 0.25rem; /* rounded-sm */
             color: #9ca3af; /* gray-400 */
-            pointer-events: none;
+            pointer-events: none; /* Empêcher d'interférer */
         }
-        .dark .default-favicon-container { /* Dark mode */
-            background-color: #374151; /* gray-700 */
-            color: #9ca3af; /* gray-400 */
-        }
-        /* Remove general .dark .text-gray-xxx if Tailwind dark: variants are sufficient */
 
     </style>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
 </head>
-<body class="bg-gray-100 dark:bg-gray-900 flex flex-col items-center min-h-screen">
+<body class="bg-gray-100 flex flex-col items-center min-h-screen">
 
-    <div class="main-container"> {/* Padding and max-width adjusted in CSS @media queries */}
-        <div class="w-full flex justify-end mb-2">
-            <button id="darkModeToggle" class="p-2 rounded-full focus:outline-none text-xl hover:bg-gray-200 dark:hover:bg-gray-700">
-                <!-- Icon will be set by JavaScript: moon for light, sun for dark -->
-            </button>
-        </div>
+    <div class="main-container">
         <form id="searchForm" class="flex" action="https://www.google.com/search" method="get" target="_blank">
-            <input type="text" name="q" placeholder="Rechercher sur Google..." class="flex-grow p-3 border border-gray-300 dark:border-gray-600 rounded-l-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent text-base sm:text-lg dark:bg-gray-700 dark:text-gray-100 dark:placeholder-gray-400" required> {/* text-base sm:text-lg */}
-            <button type="submit" class="bg-blue-500 dark:bg-blue-600 text-white p-3 rounded-r-md hover:bg-blue-600 dark:hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 dark:focus:ring-blue-400 focus:ring-offset-1">
+            <input type="text" name="q" placeholder="Rechercher sur Google..." class="flex-grow p-3 border border-gray-300 rounded-l-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent text-lg" required>
+            <button type="submit" class="bg-blue-500 text-white p-3 rounded-r-md hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-1">
                 <i class="fas fa-search"></i>
             </button>
         </form>
 
         <div class="widgets-section">
-             <h2 class="text-lg sm:text-xl font-semibold text-gray-700 dark:text-gray-200 mb-3 sm:mb-4">Widgets</h2> {/* text-lg sm:text-xl, mb-3 sm:mb-4 */}
-             <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-4"> {/* gap-3 sm:gap-4 */}
-                 <div class="widget-card clock-widget p-3 sm:p-4"> {/* p-3 sm:p-4 */}
-                     <div id="timeDisplay" class="time text-3xl sm:text-4xl">--:--:--</div> {/* text-3xl sm:text-4xl */}
-                     <div id="dateDisplay" class="date text-sm sm:text-base">----------</div> {/* text-sm sm:text-base */}
+             <h2 class="text-xl font-semibold text-gray-700 mb-4">Widgets</h2>
+             <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                 <div class="widget-card clock-widget">
+                     <div id="timeDisplay" class="time">--:--:--</div>
+                     <div id="dateDisplay" class="date">----------</div>
                  </div>
 
-                 <div class="widget-card notes-widget p-3 sm:p-4"> {/* p-3 sm:p-4 */}
-                     <h3 class="text-sm font-medium text-gray-600 dark:text-gray-400 mb-1">Notes rapides</h3>
-                     <textarea id="notesTextArea" placeholder="Écrivez quelque chose..." class="border-gray-300 dark:bg-gray-700 dark:border-gray-600 dark:text-gray-100 dark:placeholder-gray-400 text-sm"></textarea> {/* text-sm */}
-                     <button id="saveNotesBtn" class="text-xs py-1 px-2 sm:py-auto sm:px-auto sm:text-sm bg-blue-500 text-white rounded hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-1 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-400"> {/* Adjusted padding and text size for notes save button */}
+                 <div class="widget-card notes-widget">
+                     <h3 class="text-sm font-medium text-gray-600 mb-1">Notes rapides</h3>
+                     <textarea id="notesTextArea" placeholder="Écrivez quelque chose..."></textarea>
+                     <button id="saveNotesBtn" class="bg-blue-500 text-white rounded hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-1">
                          <i class="fas fa-save mr-1"></i> Sauvegarder
                      </button>
                  </div>
 
-                 <div class="widget-card weather-widget-container p-0"> {/* p-0 was already there, ensure it's fine inside p-3 sm:p-4 card if that was applied */}
+                 <div class="widget-card weather-widget-container">
                      <a class="weatherwidget-io" href="https://forecast7.com/fr/45d50n73d57/montreal/" data-label_1="MONTRÉAL" data-label_2="MÉTÉO" data-theme="pure" data-basecolor="ffffff" data-textcolor="#374151" data-lowcolor="#3b82f6" data-highcolor="#ef4444" style="display: block; position: relative; height: 100%; padding: 0 !important; margin: 0 !important;">MONTRÉAL MÉTÉO</a>
                      </div>
              </div>
         </div>
 
-        <div class="bg-white dark:bg-gray-800 p-4 sm:p-6 rounded-lg shadow-md w-full"> {/* p-4 sm:p-6 */}
-            <h2 class="text-lg sm:text-xl font-semibold text-gray-700 dark:text-gray-200 mb-3 sm:mb-4">
-                <span class="inline sm:hidden">Liens Rapides</span>
-                <span class="hidden sm:inline">Liens Rapides (Glisser-déposer pour réorganiser)</span>
-            </h2> {/* Title adjusted for mobile */}
-            <div id="quickLinksGrid" class="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-5 lg:grid-cols-6 xl:grid-cols-8 gap-2 sm:gap-3 md:gap-4"> {/* grid-cols-3, responsive gaps */}
-                {/* QuickLink elements get .dark styles via .dark .quick-link in <style> and padding also from <style> */}
+        <div class="bg-white p-6 rounded-lg shadow-md w-full">
+            <h2 class="text-xl font-semibold text-gray-700 mb-4">Liens Rapides (Glisser-déposer pour réorganiser)</h2>
+            <div id="quickLinksGrid" class="grid grid-cols-4 sm:grid-cols-5 md:grid-cols-6 lg:grid-cols-8 gap-4">
                 </div>
         </div>
     </div>
 
-    <div id="addLinkModal" class="modal fixed inset-0 flex items-center justify-center hidden z-50 p-4"> {/* Added p-4 to modal backdrop for some spacing from screen edges */}
-        <div class="modal-content bg-white dark:bg-gray-800 p-4 sm:p-6 rounded-lg shadow-xl w-full"> {/* w-full within max-width, p-4 sm:p-6 */}
-            <h3 class="text-base sm:text-lg font-semibold mb-3 sm:mb-4 text-gray-900 dark:text-gray-100">Ajouter un nouveau lien</h3> {/* text-base sm:text-lg */}
+    <div id="addLinkModal" class="modal fixed inset-0 flex items-center justify-center hidden z-50">
+        <div class="modal-content bg-white p-6 rounded-lg shadow-xl">
+            <h3 class="text-lg font-semibold mb-4">Ajouter un nouveau lien</h3>
             <form id="addLinkForm">
-                <div class="mb-3 sm:mb-4"> {/* mb-3 sm:mb-4 */}
-                    <label for="linkUrl" class="block text-xs sm:text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">URL</label> {/* text-xs sm:text-sm */}
-                    <input type="text" id="linkUrl" name="linkUrl" placeholder="example.com" class="w-full p-2 text-sm sm:text-base border border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-100 dark:placeholder-gray-400 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500" required> {/* text-sm sm:text-base */}
+                <div class="mb-4">
+                    <label for="linkUrl" class="block text-sm font-medium text-gray-700 mb-1">URL</label>
+                    <input type="text" id="linkUrl" name="linkUrl" placeholder="example.com" class="w-full p-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500" required>
                      </div>
-                <div class="mb-3 sm:mb-4"> {/* mb-3 sm:mb-4 */}
-                    <label for="linkName" class="block text-xs sm:text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Nom du site (obligatoire)</label> {/* text-xs sm:text-sm */}
-                    <input type="text" id="linkName" name="linkName" class="w-full p-2 text-sm sm:text-base border border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-100 dark:placeholder-gray-400 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500" required> {/* text-sm sm:text-base */}
+                <div class="mb-4">
+                    <label for="linkName" class="block text-sm font-medium text-gray-700 mb-1">Nom du site (obligatoire)</label>
+                    <input type="text" id="linkName" name="linkName" class="w-full p-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500" required>
                 </div>
                 <div class="flex justify-end space-x-2">
-                    <button type="button" id="cancelAddLinkBtn" class="px-3 py-2 sm:px-4 text-xs sm:text-sm bg-gray-300 dark:bg-gray-600 dark:hover:bg-gray-500 dark:text-gray-200 rounded-md hover:bg-gray-400">Annuler</button> {/* Adjusted padding and text size */}
-                    <button type="submit" class="px-3 py-2 sm:px-4 text-xs sm:text-sm bg-blue-500 dark:bg-blue-600 text-white rounded-md hover:bg-blue-600 dark:hover:bg-blue-700">Ajouter</button> {/* Adjusted padding and text size */}
+                    <button type="button" id="cancelAddLinkBtn" class="px-4 py-2 bg-gray-300 rounded-md hover:bg-gray-400">Annuler</button>
+                    <button type="submit" class="px-4 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600">Ajouter</button>
                 </div>
             </form>
         </div>
@@ -396,8 +311,6 @@
         const dateDisplay = document.getElementById('dateDisplay');
         const notesTextArea = document.getElementById('notesTextArea');
         const saveNotesBtn = document.getElementById('saveNotesBtn');
-        const darkModeToggle = document.getElementById('darkModeToggle');
-        const htmlElement = document.documentElement; // Target <html> element
 
         // --- Variables globales ---
         let quickLinks = [];
@@ -407,32 +320,6 @@
         let draggedItem = null;
 
         // --- Fonctions ---
-
-        // --- Dark Mode ---
-        function applyDarkMode(isDark) {
-            if (isDark) {
-                htmlElement.classList.add('dark');
-                darkModeToggle.innerHTML = '<i class="fas fa-sun text-yellow-400"></i>'; // Sun icon
-                // hover styles for toggle are now handled by Tailwind: hover:bg-gray-200 dark:hover:bg-gray-700
-            } else {
-                htmlElement.classList.remove('dark');
-                // Moon icon for light mode. Tailwind classes ensure correct icon color in both modes.
-                darkModeToggle.innerHTML = '<i class="fas fa-moon text-gray-700 dark:text-gray-300"></i>';
-            }
-            updateWeatherWidgetTheme(isDark);
-        }
-
-        function toggleDarkMode() {
-            const isCurrentlyDark = htmlElement.classList.contains('dark'); // Check current state
-            localStorage.setItem('darkMode', !isCurrentlyDark); // Store the new state
-            applyDarkMode(!isCurrentlyDark); // Apply the new state
-        }
-
-        function loadDarkModePreference() {
-            const prefersDark = localStorage.getItem('darkMode') === 'true';
-            applyDarkMode(prefersDark); // Apply preference
-            // Weather widget script will be loaded after this, ensuring it gets the correct initial theme
-        }
 
         // --- Fonctions Liens Rapides ---
         function loadLinks() {
@@ -556,248 +443,4 @@
             } catch (e) {
                 console.error("Erreur lors du parsing de l'URL pour ajouter www.:", e, url);
                 // Retourner l'URL avec seulement le protocole ajouté si le parsing échoue
-                 return url.startsWith('https://') ? url : inputUrl; // Retourner l'original si l'ajout https a échoué
-            }
-
-            return url;
-        }
-
-
-        function addLink(name, rawUrl) {
-            const formattedUrl = formatUrl(rawUrl);
-
-            if (!formattedUrl || !name) {
-                alert("Nom et URL sont requis et l'URL doit être valide.");
-                return;
-            }
-
-             // Vérifier si l'URL existe déjà (optionnel)
-            if (quickLinks.some(link => link.url === formattedUrl)) {
-                 alert("Ce lien existe déjà !");
-                 return;
-            }
-
-
-            quickLinks.push({ name, url: formattedUrl });
-            saveLinks();
-            renderLinks();
-            closeAddLinkModal();
-            console.log("Lien ajouté:", { name, url: formattedUrl });
-        }
-
-        function deleteLink(index) {
-            if (index >= 0 && index < quickLinks.length) {
-                const linkToDelete = quickLinks[index];
-                if (confirm(`Voulez-vous vraiment supprimer le lien "${linkToDelete.name}" ?`)) {
-                    quickLinks.splice(index, 1);
-                    saveLinks();
-                    renderLinks();
-                    console.log("Lien supprimé:", linkToDelete);
-                }
-            } else { console.error("Index de suppression invalide:", index); }
-        }
-
-        function openAddLinkModal() {
-            addLinkForm.reset(); addLinkModal.classList.remove('hidden'); linkUrlInput.focus();
-        }
-
-        function closeAddLinkModal() { addLinkModal.classList.add('hidden'); }
-
-        // --- Fonctions Drag & Drop ---
-        function handleDragStart(e) {
-            draggedItem = this;
-            e.dataTransfer.effectAllowed = 'move';
-            e.dataTransfer.setData('text/plain', this.dataset.index); // Utiliser l'index actuel de l'élément
-            setTimeout(() => this.classList.add('dragging'), 0);
-        }
-
-        function handleDragEnd(e) {
-            if (draggedItem) { // Vérifier si draggedItem existe encore
-                 draggedItem.classList.remove('dragging');
-            }
-            quickLinksGrid.querySelectorAll('.quick-link').forEach(item => item.classList.remove('drag-over'));
-            draggedItem = null;
-        }
-
-        function handleDragOver(e) {
-            e.preventDefault();
-            e.dataTransfer.dropEffect = 'move';
-            return false;
-        }
-
-        function handleDragEnter(e) {
-            e.preventDefault();
-            if (this !== draggedItem && this.classList.contains('quick-link')) {
-                this.classList.add('drag-over');
-            }
-        }
-
-        function handleDragLeave(e) {
-             if (this !== draggedItem && this.classList.contains('quick-link')) {
-                 this.classList.remove('drag-over');
-             }
-        }
-
-        function handleDrop(e) {
-            e.stopPropagation();
-            e.preventDefault();
-
-            if (!draggedItem || draggedItem === this) {
-                 if(this.classList) this.classList.remove('drag-over'); // Nettoyer même si drop invalide
-                 return;
-            }
-             this.classList.remove('drag-over'); // Nettoyer la cible
-
-            // Utiliser les éléments actuels dans le DOM pour déterminer les index
-            const currentLinksElements = Array.from(quickLinksGrid.querySelectorAll('.quick-link'));
-            const fromIndex = currentLinksElements.indexOf(draggedItem);
-            const toIndex = currentLinksElements.indexOf(this);
-
-            console.log(`Drop: Moving from index ${fromIndex} to index ${toIndex}`);
-
-            if (fromIndex !== -1 && toIndex !== -1 && fromIndex !== toIndex) {
-                // Réorganiser l'array de données
-                const itemToMove = quickLinks.splice(fromIndex, 1)[0];
-                quickLinks.splice(toIndex, 0, itemToMove);
-                saveLinks();
-                renderLinks(); // Re-rend la grille pour refléter le nouvel ordre des données
-            } else {
-                console.warn("Drop annulé: index invalides ou identiques", fromIndex, toIndex);
-            }
-             // Assurer que draggedItem est nullifié après le drop
-             handleDragEnd.call(draggedItem); // Appeler dragEnd pour nettoyer draggedItem
-        }
-
-
-        // --- Fonctions Horloge & Date ---
-        function updateClock() {
-            const now = new Date();
-            const hours = String(now.getHours()).padStart(2, '0');
-            const minutes = String(now.getMinutes()).padStart(2, '0');
-            const seconds = String(now.getSeconds()).padStart(2, '0');
-            timeDisplay.textContent = `${hours}:${minutes}:${seconds}`;
-            const optionsDate = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
-            dateDisplay.textContent = now.toLocaleDateString('fr-CA', optionsDate);
-        }
-
-        function startClock() {
-            if (clockInterval) clearInterval(clockInterval);
-            updateClock();
-            clockInterval = setInterval(updateClock, 1000);
-        }
-
-        // --- Fonctions Notes ---
-        function loadNotes() {
-            const savedNotes = localStorage.getItem(NOTES_STORAGE_KEY);
-            if (savedNotes) { notesTextArea.value = savedNotes; }
-        }
-
-        function saveNotes() {
-            const notesContent = notesTextArea.value;
-            try {
-                localStorage.setItem(NOTES_STORAGE_KEY, notesContent);
-                console.log("Notes sauvegardées.");
-                const originalText = saveNotesBtn.innerHTML; // This might need re-evaluation if icon changes
-                const originalIcon = '<i class="fas fa-save mr-1"></i> Sauvegarder'; // Store original full content
-                saveNotesBtn.innerHTML = '<i class="fas fa-check mr-1"></i> Sauvegardé!';
-
-                // Temporarily change color to green for feedback
-                const currentIsDark = htmlElement.classList.contains('dark');
-                const blueButtonClasses = ['bg-blue-500', 'hover:bg-blue-600'];
-                const darkBlueButtonClasses = ['dark:bg-blue-600', 'dark:hover:bg-blue-700'];
-                const greenButtonClasses = ['bg-green-500', 'hover:bg-green-600'];
-                const darkGreenButtonClasses = ['dark:bg-green-600', 'dark:hover:bg-green-700'];
-
-                saveNotesBtn.classList.remove(...blueButtonClasses, ...darkBlueButtonClasses);
-                saveNotesBtn.classList.add(...greenButtonClasses, ...darkGreenButtonClasses);
-
-
-                setTimeout(() => {
-                    if (saveNotesBtn) { // Check if button still exists
-                        saveNotesBtn.innerHTML = originalIcon; // Restore original icon and text
-                        saveNotesBtn.classList.remove(...greenButtonClasses, ...darkGreenButtonClasses);
-                        saveNotesBtn.classList.add(...blueButtonClasses, ...darkBlueButtonClasses);
-                    }
-                }, 1500);
-            } catch (e) { console.error("Erreur sauvegarde notes:", e); alert("Erreur sauvegarde notes."); }
-        }
-
-        // --- Fonction pour charger le script du widget météo ---
-        function loadWeatherWidgetScript() {
-            // Remove existing script if it exists to ensure a clean load
-            const existingScript = document.getElementById('weatherwidget-io-js');
-            if (existingScript) {
-                existingScript.remove();
-            }
-            // Reset the global marker if used by the widget itself
-            window.weatherwidgetIO = undefined; // Or false, depending on how the widget script uses it
-
-            const script = document.createElement('script');
-            script.id = 'weatherwidget-io-js';
-            script.src = 'https://weatherwidget.io/js/widget.min.js';
-            script.async = true;
-            document.body.appendChild(script);
-            console.log("Script WeatherWidget (re)chargé.");
-        }
-
-        function updateWeatherWidgetTheme(isDark) {
-            const weatherWidgetAnchor = document.querySelector('.weatherwidget-io');
-            if (weatherWidgetAnchor) {
-                const newBaseColor = isDark ? '#1f2937' : '#ffffff'; // gray-800 or white
-                const newTextColor = isDark ? '#d1d5db' : '#374151'; // gray-300 or gray-700
-
-                weatherWidgetAnchor.setAttribute('data-basecolor', newBaseColor);
-                weatherWidgetAnchor.setAttribute('data-textcolor', newTextColor);
-
-                // If the widget is already initialized and has an iframe, remove it to force re-creation
-                const iframe = weatherWidgetAnchor.querySelector('iframe');
-                if (iframe) {
-                    iframe.remove();
-                }
-                // Also remove any other direct children (like "Loading..." text) added by the script previously
-                // but preserve the script tag itself if it's a child of the anchor (it's usually not)
-                while (weatherWidgetAnchor.firstChild) {
-                     if(weatherWidgetAnchor.firstChild.tagName === 'SCRIPT') break; // Should not happen with weatherwidget.io
-                     weatherWidgetAnchor.removeChild(weatherWidgetAnchor.firstChild);
-                }
-
-
-                // Re-load the script. This is a more robust way to ensure re-initialization.
-                loadWeatherWidgetScript();
-                console.log(`Weather widget theme attributes updated for ${isDark ? 'dark' : 'light'} mode. Script reloaded.`);
-            }
-        }
-
-
-        // --- Gestionnaires d'événements Globaux ---
-        saveNotesBtn.addEventListener('click', saveNotes);
-        if(darkModeToggle) { // Ensure button exists before adding listener
-            darkModeToggle.addEventListener('click', toggleDarkMode);
-        }
-        addLinkModal.addEventListener('click', (e) => { if (e.target === addLinkModal) closeAddLinkModal(); });
-        cancelAddLinkBtn.addEventListener('click', closeAddLinkModal);
-
-        addLinkForm.addEventListener('submit', (e) => {
-            e.preventDefault();
-            const name = linkNameInput.value.trim();
-            const url = linkUrlInput.value.trim();
-            if (name && url) {
-                addLink(name, url);
-            }
-        });
-
-
-        // --- Initialisation ---
-        document.addEventListener('DOMContentLoaded', () => {
-            loadDarkModePreference(); // Apply dark mode preference, which also calls updateWeatherWidgetTheme (which then calls loadWeatherWidgetScript)
-            loadLinks();
-            startClock();
-            loadNotes();
-            // loadWeatherWidgetScript(); // Now called by updateWeatherWidgetTheme, which is called by loadDarkModePreference
-            console.log("Page d'accueil initialisée.");
-        });
-
-    </script>
-
-</body>
-</html>
+                 return url.startsWith('https://') ? url : inputUrl
