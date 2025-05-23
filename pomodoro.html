@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="fr" class="dark">
+<html lang="en" class="dark">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
@@ -89,9 +89,9 @@
     <div id="app-widget" v-cloak>
         <div class="widget-container text-center">
             <div class="text-lg sm:text-xl font-semibold mb-1 select-none" :class="[currentTheme.text, currentTheme.bg.includes('gradient') ? 'text-shadow-strong' : '']">
-                <span v-if="currentSessionType === 'work'"><i class="fas fa-briefcase mr-1"></i> Travail</span>
-                <span v-else-if="currentSessionType === 'shortBreak'"><i class="fas fa-coffee mr-1"></i> Pause C.</span>
-                <span v-else-if="currentSessionType === 'longBreak'"><i class="fas fa-couch mr-1"></i> Pause L.</span>
+                <span v-if="currentSessionType === 'work'"><i class="fas fa-briefcase mr-1"></i> Work</span>
+                <span v-else-if="currentSessionType === 'shortBreak'"><i class="fas fa-coffee mr-1"></i> S. Break</span>
+                <span v-else-if="currentSessionType === 'longBreak'"><i class="fas fa-couch mr-1"></i> L. Break</span>
                 <span v-if="currentSessionType === 'work' || currentSessionType === 'shortBreak'" class="text-sm"> ({{ currentPomodoroCycle + 1 }}/{{ pomodorosPerSet }})</span>
             </div>
 
@@ -100,7 +100,7 @@
                     {{ formatTimer_HMS(timerRemaining) }}
                 </div>
                 <div v-if="isSessionComplete && !isTimerRunning && isSessionTransitioning" :class="[currentTheme.accent, 'mt-1 text-sm font-semibold animate-pulse']">
-                    Terminé !
+                    Done!
                 </div>
             </div>
             
@@ -120,9 +120,9 @@
 
             <div class="mt-2 w-full">
                 <div class="flex flex-wrap justify-center items-center gap-2">
-                    <button @click="startPauseResumeTimer" :disabled="config.workDuration === 0" class="control-button-widget flex-1" :class="[currentTheme.accentButtonClass, config.workDuration === 0 ? 'opacity-50 cursor-not-allowed' : 'hover:opacity-90']"> <i :class="isTimerRunning ? 'fas fa-pause' : 'fas fa-play'" class="mr-1.5"></i> {{ isTimerRunning ? 'Pause' : (timerRemaining !== timerDuration && timerRemaining > 0 && !isSessionComplete ? 'Reprendre' : 'Démarrer') }} </button>
-                    <button @click="skipSession" :disabled="isTimerRunning || config.workDuration === 0" class="control-button-widget" :class="[currentTheme.buttonClass, (isTimerRunning || config.workDuration === 0) ? 'opacity-50 cursor-not-allowed' : 'opacity-80 hover:opacity-100']" title="Passer à la session suivante"> <i class="fas fa-forward"></i> </button>
-                    <button @click="resetTimer" :disabled="config.workDuration === 0 || (timerRemaining === config.workDuration && !isTimerRunning && !isSessionComplete && currentPomodoroCycle === 0 && currentSessionType === 'work')" class="control-button-widget" :class="[currentTheme.buttonClass, (config.workDuration === 0 || (timerRemaining === config.workDuration && !isTimerRunning && !isSessionComplete && currentPomodoroCycle === 0 && currentSessionType === 'work')) ? 'opacity-50 cursor-not-allowed' : 'opacity-80 hover:opacity-100']" title="Réinitialiser"> <i class="fas fa-undo"></i> </button>
+                    <button @click="startPauseResumeTimer" :disabled="config.workDuration === 0" class="control-button-widget flex-1" :class="[currentTheme.accentButtonClass, config.workDuration === 0 ? 'opacity-50 cursor-not-allowed' : 'hover:opacity-90']"> <i :class="isTimerRunning ? 'fas fa-pause' : 'fas fa-play'" class="mr-1.5"></i> {{ isTimerRunning ? 'Pause' : (timerRemaining !== timerDuration && timerRemaining > 0 && !isSessionComplete ? 'Resume' : 'Start') }} </button>
+                    <button @click="skipSession" :disabled="isTimerRunning || config.workDuration === 0" class="control-button-widget" :class="[currentTheme.buttonClass, (isTimerRunning || config.workDuration === 0) ? 'opacity-50 cursor-not-allowed' : 'opacity-80 hover:opacity-100']" title="Skip to next session"> <i class="fas fa-forward"></i> </button>
+                    <button @click="resetTimer" :disabled="config.workDuration === 0 || (timerRemaining === config.workDuration && !isTimerRunning && !isSessionComplete && currentPomodoroCycle === 0 && currentSessionType === 'work')" class="control-button-widget" :class="[currentTheme.buttonClass, (config.workDuration === 0 || (timerRemaining === config.workDuration && !isTimerRunning && !isSessionComplete && currentPomodoroCycle === 0 && currentSessionType === 'work')) ? 'opacity-50 cursor-not-allowed' : 'opacity-80 hover:opacity-100']" title="Reset"> <i class="fas fa-undo"></i> </button>
                 </div>
             </div>
         </div>
@@ -134,25 +134,25 @@
         const WIDGET_THEMES = {
             dark: {
                 id: 'default_dark_widget', name: 'Default Dark Widget', icon: 'fas fa-adjust',
-                bg: 'bg-transparent', // Crucial change for card effect from parent
+                bg: 'bg-transparent', 
                 text: 'text-gray-300', 
                 accent: 'text-blue-400', 
                 buttonClass: 'bg-slate-600 hover:bg-slate-500 active:bg-slate-700 text-gray-300',
                 accentButtonClass: 'bg-blue-600 hover:bg-blue-700 active:bg-blue-800 text-white',
-                ringOffsetClass: 'ring-offset-gray-800', // To match the underlying card bg from index.html
-                textMutedBg: 'bg-slate-700/50', // Adjusted for contrast on gray-800
+                ringOffsetClass: 'ring-offset-gray-800', 
+                textMutedBg: 'bg-slate-700/50', 
                 inputBg: 'bg-slate-700'
             },
             light: {
                 id: 'default_light_widget', name: 'Default Light Widget', icon: 'fas fa-adjust',
-                bg: 'bg-white', // Changed
-                text: 'text-gray-800', // Changed
-                accent: 'text-blue-500', // Changed
-                buttonClass: 'bg-gray-200 hover:bg-gray-300 active:bg-gray-400 text-gray-800', // Changed
-                accentButtonClass: 'bg-blue-500 hover:bg-blue-600 active:bg-blue-700 text-white', // Remains good
-                ringOffsetClass: 'ring-offset-white', // Changed
-                textMutedBg: 'bg-gray-100/50', // Changed
-                inputBg: 'bg-gray-50' // Changed (though not currently used by pomodoro)
+                bg: 'bg-white', 
+                text: 'text-gray-800', 
+                accent: 'text-blue-500', 
+                buttonClass: 'bg-gray-200 hover:bg-gray-300 active:bg-gray-400 text-gray-800', 
+                accentButtonClass: 'bg-blue-500 hover:bg-blue-600 active:bg-blue-700 text-white', 
+                ringOffsetClass: 'ring-offset-white', 
+                textMutedBg: 'bg-gray-100/50', 
+                inputBg: 'bg-gray-50' 
             }
         };
 
@@ -162,7 +162,6 @@
             longBreakDuration: 15 * 60,
             pomodorosPerSet: 4,
             defaultSound: 'beep',
-            // theme: WIDGET_THEMES.dark // This will be dynamically handled by the Vue app.
         };
 
         createApp({
@@ -192,13 +191,15 @@
 
                         document.documentElement.className = themeKey; 
                         if (themeKey === 'dark') {
-                            document.documentElement.className = 'dark'; // Ensure html tag gets dark class
-                            document.documentElement.style.backgroundColor = 'transparent'; // ADD THIS LINE
-                            document.body.style.backgroundColor = 'transparent'; // CRITICAL CHANGE
-                            document.body.style.color = '#d1d5db'; // text-gray-300
+                            document.documentElement.className = 'dark'; 
+                            document.documentElement.style.backgroundColor = 'transparent'; 
+                            document.body.style.backgroundColor = 'transparent'; 
+                            document.body.style.color = '#d1d5db'; 
                         } else { // Light theme
-                            document.body.style.backgroundColor = '#ffffff'; // Changed for bg-white
-                            document.body.style.color = '#1f2937'; // Changed for text-gray-800
+                            document.documentElement.className = 'light';
+                            document.documentElement.style.backgroundColor = '#ffffff'; // Ensure HTML bg is white for light theme
+                            document.body.style.backgroundColor = '#ffffff'; 
+                            document.body.style.color = '#1f2937'; 
                         }
                     } else {
                         console.warn('Unknown theme key:', themeKey);
@@ -221,20 +222,20 @@
                     for (let i = 0; i < pomodorosPerSet.value; i++) {
                         guide.push({
                             id: `work-${i}`, type: 'work', cycleIndex: i,
-                            shortLabel: `T${i + 1}`, fullLabel: `Travail ${i + 1}`, icon: 'fas fa-briefcase',
+                            shortLabel: `W${i + 1}`, fullLabel: `Work ${i + 1}`, icon: 'fas fa-briefcase',
                             isCurrent: currentSessionType.value === 'work' && currentPomodoroCycle.value === i && !isSessionTransitioning.value
                         });
                         if (i < pomodorosPerSet.value - 1) {
                             guide.push({
                                 id: `shortBreak-${i}`, type: 'shortBreak', cycleIndex: i, 
-                                shortLabel: `PC`, fullLabel: `Pause Courte ${i + 1}`, icon: 'fas fa-coffee',
+                                shortLabel: `SB`, fullLabel: `Short Break ${i + 1}`, icon: 'fas fa-coffee',
                                 isCurrent: currentSessionType.value === 'shortBreak' && currentPomodoroCycle.value === i && !isSessionTransitioning.value
                             });
                         }
                     }
                     guide.push({
                         id: 'longBreak', type: 'longBreak', cycleIndex: pomodorosPerSet.value - 1, 
-                        shortLabel: 'PL', fullLabel: 'Pause Longue', icon: 'fas fa-couch',
+                        shortLabel: 'LB', fullLabel: 'Long Break', icon: 'fas fa-couch',
                         isCurrent: currentSessionType.value === 'longBreak' && !isSessionTransitioning.value
                     });
 
@@ -383,9 +384,6 @@
                     resetTimer(); 
 
                     window.addEventListener('message', (event) => {
-                        // IMPORTANT: Add origin check for security in production
-                        // if (event.origin !== 'https://your-main-page-domain.com') return;
-
                         if (event.data && event.data.type === 'themeChange') {
                             applyTheme(event.data.theme); 
                         }
