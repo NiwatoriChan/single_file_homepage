@@ -193,6 +193,7 @@
                         document.documentElement.className = themeKey; 
                         if (themeKey === 'dark') {
                             document.documentElement.className = 'dark'; // Ensure html tag gets dark class
+                            document.documentElement.style.backgroundColor = 'transparent'; // ADD THIS LINE
                             document.body.style.backgroundColor = 'transparent'; // CRITICAL CHANGE
                             document.body.style.color = '#d1d5db'; // text-gray-300
                         } else { // Light theme
