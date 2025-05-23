@@ -1,9 +1,9 @@
 <!DOCTYPE html>
-<html lang="fr">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Nouvel Onglet Personnalisé</title>
+    <title>Custom New Tab</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" xintegrity="sha512-9usAa10IRO0HhonpyAIVpjrylPvoDwiPUiKdWk5t3PyolY1cOd4DSE0Ga+ri4AuTroPR5aQvXU9xC6qOPnzFeg==" crossorigin="anonymous" referrerpolicy="no-referrer" />
     <style>
@@ -344,25 +344,6 @@
             background-color: #1f2937; 
         }
 
-        .pomodoro-widget-container {
-            /* Ensures the container itself doesn't introduce unwanted padding or borders */
-            padding: 0;
-            border: none; /* Overriding default widget-card border if not desired */
-            overflow: hidden; /* To contain the iframe nicely */
-            display: flex; /* To help with centering/sizing the iframe if needed */
-            align-items: stretch; /* Make iframe take full height */
-            justify-content: stretch; /* Make iframe take full width */
-        }
-
-        .pomodoro-iframe {
-            display: block; /* Iframes are inline by default */
-            width: 100%;
-            height: 100%;
-            border: none; /* Ensure no iframe border */
-            min-height: 280px; /* Keep the min-height specified before */
-        }
-   
-        
     </style>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
 </head>
@@ -374,7 +355,7 @@
             </button>
         </div>
         <form id="searchForm" class="flex w-full mb-6" action="https://www.google.com/search" method="get" target="_blank">
-            <input type="text" name="q" placeholder="Rechercher sur Google..." class="flex-grow p-3 rounded-l-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent text-base sm:text-lg" required>
+            <input type="text" name="q" placeholder="Search Google..." class="flex-grow p-3 rounded-l-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent text-base sm:text-lg" required>
             <button type="submit" class="bg-blue-500 dark:bg-blue-600 text-white p-3 rounded-r-md hover:bg-blue-600 dark:hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 dark:focus:ring-blue-400 focus:ring-offset-1">
                 <i class="fas fa-search"></i>
             </button>
@@ -389,28 +370,24 @@
                 </div>
 
                 <div class="widget-card notes-widget p-3 sm:p-4">
-                    <h3 class="text-sm font-medium text-gray-600 dark:text-gray-400 mb-1">Notes rapides</h3>
-                    <textarea id="notesTextArea" placeholder="Écrivez quelque chose..." class="text-sm"></textarea>
+                    <h3 class="text-sm font-medium text-gray-600 dark:text-gray-400 mb-1">Quick Notes</h3>
+                    <textarea id="notesTextArea" placeholder="Write something..." class="text-sm"></textarea>
                     <div class="flex justify-start items-center mt-2">
                         <button id="saveNotesBtn" class="text-xs py-1 px-2 sm:text-sm bg-blue-500 text-white rounded hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-1 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-400">
-                            <i class="fas fa-save mr-1"></i> Sauvegarder
+                            <i class="fas fa-save mr-1"></i> Save
                         </button>
                     </div>
                     <div id="noteProcessingStatus" class="text-xs text-gray-500 dark:text-gray-400 mt-1 h-4"></div>
                 </div>
-
-                <div class="widget-card pomodoro-widget-container p-0 md:col-span-2 lg:col-span-1">
-                    <iframe id="pomodoroWidgetFrame" class="pomodoro-iframe" src="pomodoro.html" style="border:none; width:100%; height:100%; min-height: 280px;"></iframe>
-                </div>
                 
                 <div class="widget-card weather-widget-container p-0 md:col-span-2 lg:col-span-1">
-                    <a class="weatherwidget-io" href="https://forecast7.com/fr/45d50n73d57/montreal/" data-label_1="MONTRÉAL" data-label_2="MÉTÉO" data-theme="pure" data-basecolor="ffffff" data-textcolor="#374151" data-lowcolor="#3b82f6" data-highcolor="#ef4444" style="display: block; position: relative; height: 100%; padding: 0 !important; margin: 0 !important;">MONTRÉAL MÉTÉO</a>
+                    <a class="weatherwidget-io" href="https://forecast7.com/en/51d51n0d13/london/" data-label_1="LONDON" data-label_2="WEATHER" data-theme="pure" data-basecolor="ffffff" data-textcolor="#374151" data-lowcolor="#3b82f6" data-highcolor="#ef4444" style="display: block; position: relative; height: 100%; padding: 0 !important; margin: 0 !important;">LONDON WEATHER</a>
                 </div>
             </div>
         </div>
 
         <div id="quickLinksSectionContainer" class="w-full">
-            <h2 class="text-lg sm:text-xl font-semibold custom-section-title mb-3 sm:mb-4">Liens Rapides</h2>
+            <h2 class="text-lg sm:text-xl font-semibold custom-section-title mb-3 sm:mb-4">Quick Links</h2>
             <div id="quickLinksGrid" class="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-5 lg:grid-cols-6 xl:grid-cols-8 gap-2 sm:gap-3 md:gap-4">
             </div>
         </div>
@@ -418,19 +395,19 @@
 
     <div id="addLinkModal" class="modal fixed inset-0 flex items-center justify-center hidden z-50 p-4">
         <div class="modal-content p-4 sm:p-6 rounded-lg shadow-xl w-full"> 
-            <h3 class="text-base sm:text-lg font-semibold mb-3 sm:mb-4 text-gray-900 dark:text-gray-100">Ajouter un nouveau lien</h3>
+            <h3 class="text-base sm:text-lg font-semibold mb-3 sm:mb-4 text-gray-900 dark:text-gray-100">Add a new link</h3>
             <form id="addLinkForm">
                 <div class="mb-3 sm:mb-4">
                     <label for="linkUrl" class="block text-xs sm:text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">URL</label>
                     <input type="text" id="linkUrl" name="linkUrl" placeholder="example.com" class="w-full p-2 text-sm sm:text-base border border-gray-300 bg-white text-gray-900 placeholder-gray-500 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-100 dark:placeholder-gray-400 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500" required>
                 </div>
                 <div class="mb-3 sm:mb-4">
-                    <label for="linkName" class="block text-xs sm:text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Nom du site (obligatoire)</label>
+                    <label for="linkName" class="block text-xs sm:text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Site name (required)</label>
                     <input type="text" id="linkName" name="linkName" class="w-full p-2 text-sm sm:text-base border border-gray-300 bg-white text-gray-900 placeholder-gray-500 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-100 dark:placeholder-gray-400 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500" required>
                 </div>
                 <div class="flex justify-end space-x-2">
-                    <button type="button" id="cancelAddLinkBtn" class="px-3 py-2 sm:px-4 text-xs sm:text-sm bg-gray-300 text-gray-700 hover:bg-gray-400 dark:bg-gray-600 dark:text-gray-200 dark:hover:bg-gray-500 rounded-md">Annuler</button>
-                    <button type="submit" class="px-3 py-2 sm:px-4 text-xs sm:text-sm bg-blue-500 text-white hover:bg-blue-600 dark:bg-blue-600 dark:hover:bg-blue-700 rounded-md">Ajouter</button>
+                    <button type="button" id="cancelAddLinkBtn" class="px-3 py-2 sm:px-4 text-xs sm:text-sm bg-gray-300 text-gray-700 hover:bg-gray-400 dark:bg-gray-600 dark:text-gray-200 dark:hover:bg-gray-500 rounded-md">Cancel</button>
+                    <button type="submit" class="px-3 py-2 sm:px-4 text-xs sm:text-sm bg-blue-500 text-white hover:bg-blue-600 dark:bg-blue-600 dark:hover:bg-blue-700 rounded-md">Add</button>
                 </div>
             </form>
         </div>
@@ -438,11 +415,11 @@
 
     <div id="confirmModal" class="modal fixed inset-0 flex items-center justify-center hidden z-50 p-4">
         <div class="modal-content p-4 sm:p-6 rounded-lg shadow-xl w-full">
-            <h3 id="confirmModalTitle" class="text-base sm:text-lg font-semibold mb-3 sm:mb-4 text-gray-900 dark:text-gray-100">Confirmation</h3>
-            <p id="confirmModalMessage" class="text-sm text-gray-700 dark:text-gray-300 mb-4">Êtes-vous sûr ?</p>
+            <h3 id="confirmModalTitle" class="text-base sm:text-lg font-semibold mb-3 sm:mb-4 text-gray-900 dark:text-gray-100">Confirm</h3>
+            <p id="confirmModalMessage" class="text-sm text-gray-700 dark:text-gray-300 mb-4">Are you sure?</p>
             <div class="flex justify-end space-x-2">
-                <button type="button" id="confirmModalCancelBtn" class="px-3 py-2 sm:px-4 text-xs sm:text-sm bg-gray-300 text-gray-700 hover:bg-gray-400 dark:bg-gray-600 dark:text-gray-200 dark:hover:bg-gray-500 rounded-md">Annuler</button>
-                <button type="button" id="confirmModalConfirmBtn" class="px-3 py-2 sm:px-4 text-xs sm:text-sm bg-red-500 text-white hover:bg-red-600 dark:bg-red-600 dark:hover:bg-red-700 rounded-md">Confirmer</button>
+                <button type="button" id="confirmModalCancelBtn" class="px-3 py-2 sm:px-4 text-xs sm:text-sm bg-gray-300 text-gray-700 hover:bg-gray-400 dark:bg-gray-600 dark:text-gray-200 dark:hover:bg-gray-500 rounded-md">Cancel</button>
+                <button type="button" id="confirmModalConfirmBtn" class="px-3 py-2 sm:px-4 text-xs sm:text-sm bg-red-500 text-white hover:bg-red-600 dark:bg-red-600 dark:hover:bg-red-700 rounded-md">Confirm</button>
             </div>
         </div>
     </div>
@@ -523,22 +500,6 @@
                 if(darkModeToggle) darkModeToggle.innerHTML = '<i class="fas fa-moon text-gray-700 dark:text-gray-300"></i>';
             }
             console.log('HTML classes AFTER applyDarkMode:', htmlElement.className);
-
-            // Send theme change message to Pomodoro widget iframe
-            const pomodoroFrame = document.getElementById('pomodoroWidgetFrame');
-            if (pomodoroFrame) {
-                // Check if contentWindow is available, might not be if iframe hasn't loaded
-                if (pomodoroFrame.contentWindow) {
-                    pomodoroFrame.contentWindow.postMessage({
-                        type: 'themeChange',
-                        theme: isDark ? 'dark' : 'light'
-                    }, '*'); // Consider specifying the target origin for better security
-                } else {
-                    // Optional: Handle cases where iframe isn't ready (e.g., try again later, or on iframe load event)
-                    console.warn('Pomodoro iframe contentWindow not available yet for theme change.');
-                }
-            }
-            
             updateWeatherWidgetTheme(isDark);
         }
 
@@ -567,12 +528,12 @@
                 try {
                     quickLinks = JSON.parse(storedLinks);
                     if (!Array.isArray(quickLinks)) { quickLinks = []; }
-                } catch (e) { quickLinks = []; console.error("Erreur parsing liens:", e); }
+                } catch (e) { quickLinks = []; console.error("Error parsing links:", e); } // Translated console
             } else {
-                quickLinks = [
+                quickLinks = [ // Default links
                     { name: "Google", url: "https://www.google.com" },
                     { name: "YouTube", url: "https://www.youtube.com" }, 
-                    { name: "Wikipédia", url: "https://www.wikipedia.org" }
+                    { name: "Wikipedia", url: "https://www.wikipedia.org" } // Translated
                 ];
                 saveLinks();
             }
@@ -583,9 +544,9 @@
             try {
                 localStorage.setItem(QUICK_LINKS_STORAGE_KEY, JSON.stringify(quickLinks));
             } catch (e) { 
-                console.error("Erreur sauvegarde liens:", e); 
+                console.error("Error saving links:", e); // Translated console
                 if(noteProcessingStatus) {
-                    noteProcessingStatus.textContent = "Error saving links to local storage.";
+                    noteProcessingStatus.textContent = "Error saving links to local storage."; // Already English
                     setTimeout(() => { if(noteProcessingStatus) noteProcessingStatus.textContent = ''; }, 3000);
                 }
             }
@@ -605,7 +566,7 @@
         function createLinkElement(link, index) {
             const a = document.createElement('a');
             a.href = link.url;
-            a.className = 'quick-link group'; // Base class, specific bg/text/border in CSS
+            a.className = 'quick-link group'; 
             a.title = `${link.name}\n${link.url}`;
             a.target = "_blank"; a.rel = "noopener noreferrer";
             a.draggable = true;
@@ -619,7 +580,7 @@
             a.addEventListener('drop', handleDrop);
 
             const faviconContainer = document.createElement('div');
-            faviconContainer.className = 'default-favicon-container'; // Use the CSS class
+            faviconContainer.className = 'default-favicon-container'; 
             const img = document.createElement('img');
             let domainForFavicon = link.url;
             try {
@@ -634,8 +595,7 @@
             img.loading = 'lazy';
             img.onerror = function() {
                 this.onerror = null; 
-                this.style.display = 'none'; // Hide broken image
-                // Add default icon to container if image fails
+                this.style.display = 'none'; 
                 const defaultIcon = document.createElement('i');
                 defaultIcon.className = 'fas fa-link text-lg'; 
                 faviconContainer.innerHTML = ''; 
@@ -652,7 +612,7 @@
             const deleteBtn = document.createElement('button');
             deleteBtn.className = 'delete-link-btn';
             deleteBtn.innerHTML = '<i class="fas fa-times"></i>';
-            deleteBtn.title = 'Supprimer ce lien';
+            deleteBtn.title = 'Delete this link'; // Translated
             deleteBtn.onclick = (e) => {
                 e.preventDefault(); e.stopPropagation();
                 if (!quickLinksGrid) return;
@@ -668,9 +628,9 @@
         function createAddButtonElement() {
             const button = document.createElement('button');
             button.id = 'addLinkBtn';
-            button.className = 'add-link-button'; // Use the CSS class
-            button.title = 'Ajouter un nouveau lien';
-            button.innerHTML = `<i class="fas fa-plus"></i><span>Ajouter</span>`;
+            button.className = 'add-link-button'; 
+            button.title = 'Add a new link'; // Translated
+            button.innerHTML = `<i class="fas fa-plus"></i><span>Add</span>`; // Translated
             button.addEventListener('click', openAddLinkModal);
             return button;
         }
@@ -686,7 +646,7 @@
             } catch (e) {
                 console.warn("Invalid URL after formatting:", url, e);
                 if(noteProcessingStatus) {
-                    noteProcessingStatus.textContent = "URL invalide: " + inputUrl;
+                    noteProcessingStatus.textContent = "Invalid URL: " + inputUrl; // Translated
                     setTimeout(() => { if(noteProcessingStatus) noteProcessingStatus.textContent = ''; }, 3000);
                 }
                 return null;
@@ -702,7 +662,7 @@
             }
              if (!name) {
                 if(noteProcessingStatus) {
-                    noteProcessingStatus.textContent = "Le nom du site est requis.";
+                    noteProcessingStatus.textContent = "Site name is required."; // Translated
                     setTimeout(() => { if(noteProcessingStatus) noteProcessingStatus.textContent = ''; }, 3000);
                 }
                 return;
@@ -710,7 +670,7 @@
 
             if (quickLinks.some(link => link.url === formattedUrl)) {
                  if(noteProcessingStatus) {
-                    noteProcessingStatus.textContent = "Ce lien existe déjà !";
+                    noteProcessingStatus.textContent = "This link already exists!"; // Translated
                     setTimeout(() => { if(noteProcessingStatus) noteProcessingStatus.textContent = ''; }, 3000);
                  }
                  return;
@@ -725,12 +685,12 @@
         function deleteLink(index) {
             if (index >= 0 && index < quickLinks.length) {
                 const linkToDelete = quickLinks[index];
-                showConfirmModal(`Voulez-vous vraiment supprimer le lien "${linkToDelete.name}" ?`, () => {
+                showConfirmModal(`Are you sure you want to delete the link "${linkToDelete.name}"?`, () => { // Translated
                     quickLinks.splice(index, 1);
                     saveLinks();
                     renderLinks();
                 });
-            } else { console.error("Index de suppression invalide:", index); }
+            } else { console.error("Invalid delete index:", index); } // Translated console
         }
 
         function openAddLinkModal() {
@@ -810,7 +770,7 @@
             const seconds = String(now.getSeconds()).padStart(2, '0');
             if(timeDisplay) timeDisplay.textContent = `${hours}:${minutes}:${seconds}`;
             const optionsDate = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
-            if(dateDisplay) dateDisplay.textContent = now.toLocaleDateString(navigator.language || 'fr-CA', optionsDate);
+            if(dateDisplay) dateDisplay.textContent = now.toLocaleDateString(navigator.language || 'en-US', optionsDate); // Translated
         }
 
         function startClock() {
@@ -829,8 +789,8 @@
             const notesContent = notesTextArea.value;
             try {
                 localStorage.setItem(NOTES_STORAGE_KEY, notesContent);
-                const originalIcon = '<i class="fas fa-save mr-1"></i> Sauvegarder';
-                saveNotesBtn.innerHTML = '<i class="fas fa-check mr-1"></i> Sauvegardé!';
+                const originalIcon = '<i class="fas fa-save mr-1"></i> Save'; // Translated
+                saveNotesBtn.innerHTML = '<i class="fas fa-check mr-1"></i> Saved!'; // Translated
 
                 const blueButtonClasses = ['bg-blue-500', 'hover:bg-blue-600', 'dark:bg-blue-600', 'dark:hover:bg-blue-700'];
                 const greenButtonClasses = ['bg-green-500', 'hover:bg-green-600', 'dark:bg-green-600', 'dark:hover:bg-green-700'];
@@ -846,9 +806,9 @@
                     }
                 }, 1500);
             } catch (e) { 
-                console.error("Erreur sauvegarde notes:", e); 
+                console.error("Error saving notes:", e); // Translated console
                 if(noteProcessingStatus) {
-                    noteProcessingStatus.textContent = "Erreur sauvegarde notes.";
+                    noteProcessingStatus.textContent = "Error saving notes."; // Translated
                     setTimeout(() => { if(noteProcessingStatus) noteProcessingStatus.textContent = ''; }, 3000);
                 }
             }
@@ -926,27 +886,6 @@
             loadLinks();
             startClock();
             loadNotes();
-
-            // Listen for the Pomodoro widget to be ready for theme information
-            window.addEventListener('message', (event) => {
-                // IMPORTANT: In a production environment, you should always verify event.origin
-                // to ensure messages are coming from the expected source.
-                // For example: if (event.origin !== 'expected_origin_of_pomodoro.html') return;
-
-                const pomodoroFrame = document.getElementById('pomodoroWidgetFrame');
-                
-                // Check if the message is from our pomodoro iframe and is the ready signal
-                if (pomodoroFrame && event.source === pomodoroFrame.contentWindow && event.data && event.data.type === 'pomodoroWidgetReadyForTheme') {
-                    console.log("Main page: Received theme request from Pomodoro widget. Sending current theme.");
-                    const isDark = document.documentElement.classList.contains('dark');
-                    if (pomodoroFrame.contentWindow) { // Double check contentWindow before posting
-                        pomodoroFrame.contentWindow.postMessage({
-                            type: 'themeChange',
-                            theme: isDark ? 'dark' : 'light'
-                        }, '*'); // Consider specifying the target origin for the iframe for better security.
-                    }
-                }
-            });
         });
 
     </script>
