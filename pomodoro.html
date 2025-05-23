@@ -134,14 +134,14 @@
         const WIDGET_THEMES = {
             dark: {
                 id: 'default_dark_widget', name: 'Default Dark Widget', icon: 'fas fa-adjust',
-                bg: 'bg-slate-900', // Stays the same, good for iframe body
-                text: 'text-gray-300', // Changed from text-white
-                accent: 'text-blue-400', // Stays the same, good subtle accent
-                buttonClass: 'bg-slate-600 hover:bg-slate-500 active:bg-slate-700 text-gray-300', // Text changed from text-gray-200
-                accentButtonClass: 'bg-blue-600 hover:bg-blue-700 active:bg-blue-800 text-white', // Changed to align with main page blue
-                ringOffsetClass: 'ring-offset-slate-900', // Stays the same
-                textMutedBg: 'bg-slate-800/60', // Stays the same
-                inputBg: 'bg-slate-700' // Stays the same
+                bg: 'bg-transparent', // Crucial change for card effect from parent
+                text: 'text-gray-300', 
+                accent: 'text-blue-400', 
+                buttonClass: 'bg-slate-600 hover:bg-slate-500 active:bg-slate-700 text-gray-300',
+                accentButtonClass: 'bg-blue-600 hover:bg-blue-700 active:bg-blue-800 text-white',
+                ringOffsetClass: 'ring-offset-gray-800', // To match the underlying card bg from index.html
+                textMutedBg: 'bg-slate-700/50', // Adjusted for contrast on gray-800
+                inputBg: 'bg-slate-700'
             },
             light: {
                 id: 'default_light_widget', name: 'Default Light Widget', icon: 'fas fa-adjust',
@@ -192,8 +192,9 @@
 
                         document.documentElement.className = themeKey; 
                         if (themeKey === 'dark') {
-                            document.body.style.backgroundColor = '#0f172a'; // bg-slate-900 (remains correct)
-                            document.body.style.color = '#d1d5db'; // text-gray-300 (changed from #e2e8f0)
+                            document.documentElement.className = 'dark'; // Ensure html tag gets dark class
+                            document.body.style.backgroundColor = 'transparent'; // CRITICAL CHANGE
+                            document.body.style.color = '#d1d5db'; // text-gray-300
                         } else { // Light theme
                             document.body.style.backgroundColor = '#ffffff'; // Changed for bg-white
                             document.body.style.color = '#1f2937'; // Changed for text-gray-800
