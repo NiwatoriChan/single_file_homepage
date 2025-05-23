@@ -1,0 +1,415 @@
+<!DOCTYPE html>
+<html lang="fr" class="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Pomodoro Widget</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/tone/14.8.49/Tone.js"></script>
+    <style>
+        /* Basic reset and widget-specific styles */
+        html, body {
+            height: 100%;
+            width: 100%;
+            margin: 0;
+            padding: 0;
+            overflow: hidden; /* Prevent scrollbars on the iframe */
+            font-family: 'Inter', sans-serif;
+            /* Default background/color, will be overwritten by applyTheme */
+            background-color: #0f172a; 
+            color: #e2e8f0; 
+        }
+        #app-widget {
+            display: flex;
+            flex-direction: column;
+            height: 100%;
+            width: 100%;
+            padding: 8px; /* Reduced padding */
+            box-sizing: border-box;
+            align-items: center;
+            justify-content: center;
+        }
+        .widget-container {
+            width: 100%;
+            max-width: 320px; /* Max width for the widget */
+            margin: auto;
+        }
+
+        .text-shadow-strong {
+            text-shadow: 0px 0px 6px rgba(0,0,0,0.6);
+        }
+
+        .control-button-widget {
+            display: inline-flex; align-items: center; justify-content: center;
+            height: 2.25rem; /* 36px */
+            padding-left: 0.75rem; padding-right: 0.75rem; /* 12px */
+            border-radius: 0.375rem; /* rounded-md */
+            font-weight: 600; /* font-semibold */
+            font-size: 0.875rem; /* text-sm */
+            transition: background-color 0.2s ease-in-out, transform 0.1s ease, color 0.2s ease-in-out;
+            user-select: none;
+        }
+        .control-button-widget:active { transform: scale(0.95); }
+        
+        .cycle-guide-container-widget {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 0.25rem; /* 4px, reduced gap */
+            margin-bottom: 0.75rem; /* mb-3, reduced margin */
+            padding: 0.25rem;
+            border-radius: 0.375rem; /* rounded-md */
+        }
+        .cycle-guide-item-widget {
+            padding: 0.375rem 0.5rem; /* py-1.5 px-2, reduced padding */
+            border-radius: 0.375rem; /* rounded-md */
+            font-size: 0.625rem; /* text-xs, further reduced */
+            font-weight: 500; /* font-medium */
+            cursor: pointer;
+            transition: all 0.2s ease-in-out;
+            border: 1px solid transparent; /* Thinner border */
+            display: flex;
+            align-items: center;
+            gap: 0.25rem; /* space-x-1 */
+        }
+        .cycle-guide-item-widget:hover {
+            transform: translateY(-1px);
+        }
+        .cycle-guide-item-widget.current {
+            font-weight: 700; /* font-bold */
+            box-shadow: 0 0 0 1.5px currentColor; /* Thinner ring */
+        }
+        [v-cloak] { display: none; }
+
+    </style>
+</head>
+<body>
+    <div id="app-widget" v-cloak>
+        <div class="widget-container text-center">
+            <div class="text-lg sm:text-xl font-semibold mb-1 select-none" :class="[currentTheme.text, currentTheme.bg.includes('gradient') ? 'text-shadow-strong' : '']">
+                <span v-if="currentSessionType === 'work'"><i class="fas fa-briefcase mr-1"></i> Travail</span>
+                <span v-else-if="currentSessionType === 'shortBreak'"><i class="fas fa-coffee mr-1"></i> Pause C.</span>
+                <span v-else-if="currentSessionType === 'longBreak'"><i class="fas fa-couch mr-1"></i> Pause L.</span>
+                <span v-if="currentSessionType === 'work' || currentSessionType === 'shortBreak'" class="text-sm"> ({{ currentPomodoroCycle + 1 }}/{{ pomodorosPerSet }})</span>
+            </div>
+
+            <div class="timer-display-area my-3 w-full flex flex-col items-center justify-center select-none" style="min-height: 80px;">
+                 <div :class="[currentTheme.text, currentTheme.bg.includes('gradient') ? 'text-shadow-strong' : '', 'font-mono text-5xl sm:text-6xl font-bold']">
+                    {{ formatTimer_HMS(timerRemaining) }}
+                </div>
+                <div v-if="isSessionComplete && !isTimerRunning && isSessionTransitioning" :class="[currentTheme.accent, 'mt-1 text-sm font-semibold animate-pulse']">
+                    Terminé !
+                </div>
+            </div>
+            
+            <div class="cycle-guide-container-widget w-full mt-1 mb-3" :class="[currentTheme.textMutedBg || 'bg-slate-800/60']">
+                <button v-for="session in visualCycleGuide" :key="session.id"
+                        @click="jumpToSession(session)"
+                        class="cycle-guide-item-widget"
+                        :class="[
+                            session.isCurrent ? currentTheme.accentButtonClass : currentTheme.buttonClass,
+                            session.isCurrent ? 'current' : 'opacity-70 hover:opacity-100',
+                        ]"
+                        :title="session.fullLabel">
+                    <i :class="session.icon" class="text-xs"></i>
+                    <span>{{ session.shortLabel }}</span>
+                </button>
+            </div>
+
+            <div class="mt-2 w-full">
+                <div class="flex flex-wrap justify-center items-center gap-2">
+                    <button @click="startPauseResumeTimer" :disabled="config.workDuration === 0" class="control-button-widget flex-1" :class="[currentTheme.accentButtonClass, config.workDuration === 0 ? 'opacity-50 cursor-not-allowed' : 'hover:opacity-90']"> <i :class="isTimerRunning ? 'fas fa-pause' : 'fas fa-play'" class="mr-1.5"></i> {{ isTimerRunning ? 'Pause' : (timerRemaining !== timerDuration && timerRemaining > 0 && !isSessionComplete ? 'Reprendre' : 'Démarrer') }} </button>
+                    <button @click="skipSession" :disabled="isTimerRunning || config.workDuration === 0" class="control-button-widget" :class="[currentTheme.buttonClass, (isTimerRunning || config.workDuration === 0) ? 'opacity-50 cursor-not-allowed' : 'opacity-80 hover:opacity-100']" title="Passer à la session suivante"> <i class="fas fa-forward"></i> </button>
+                    <button @click="resetTimer" :disabled="config.workDuration === 0 || (timerRemaining === config.workDuration && !isTimerRunning && !isSessionComplete && currentPomodoroCycle === 0 && currentSessionType === 'work')" class="control-button-widget" :class="[currentTheme.buttonClass, (config.workDuration === 0 || (timerRemaining === config.workDuration && !isTimerRunning && !isSessionComplete && currentPomodoroCycle === 0 && currentSessionType === 'work')) ? 'opacity-50 cursor-not-allowed' : 'opacity-80 hover:opacity-100']" title="Réinitialiser"> <i class="fas fa-undo"></i> </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const { createApp, ref, computed, onMounted, onBeforeUnmount, watch, nextTick } = Vue;
+
+        const WIDGET_THEMES = {
+            dark: {
+                id: 'default_dark_widget', name: 'Default Dark Widget', icon: 'fas fa-adjust',
+                bg: 'bg-slate-900', // Stays the same, good for iframe body
+                text: 'text-gray-300', // Changed from text-white
+                accent: 'text-blue-400', // Stays the same, good subtle accent
+                buttonClass: 'bg-slate-600 hover:bg-slate-500 active:bg-slate-700 text-gray-300', // Text changed from text-gray-200
+                accentButtonClass: 'bg-blue-600 hover:bg-blue-700 active:bg-blue-800 text-white', // Changed to align with main page blue
+                ringOffsetClass: 'ring-offset-slate-900', // Stays the same
+                textMutedBg: 'bg-slate-800/60', // Stays the same
+                inputBg: 'bg-slate-700' // Stays the same
+            },
+            light: {
+                id: 'default_light_widget', name: 'Default Light Widget', icon: 'fas fa-adjust',
+                bg: 'bg-white', // Changed
+                text: 'text-gray-800', // Changed
+                accent: 'text-blue-500', // Changed
+                buttonClass: 'bg-gray-200 hover:bg-gray-300 active:bg-gray-400 text-gray-800', // Changed
+                accentButtonClass: 'bg-blue-500 hover:bg-blue-600 active:bg-blue-700 text-white', // Remains good
+                ringOffsetClass: 'ring-offset-white', // Changed
+                textMutedBg: 'bg-gray-100/50', // Changed
+                inputBg: 'bg-gray-50' // Changed (though not currently used by pomodoro)
+            }
+        };
+
+        const WIDGET_CONFIG = {
+            workDuration: 25 * 60,
+            shortBreakDuration: 5 * 60,
+            longBreakDuration: 15 * 60,
+            pomodorosPerSet: 4,
+            defaultSound: 'beep',
+            // theme: WIDGET_THEMES.dark // This will be dynamically handled by the Vue app.
+        };
+
+        createApp({
+            setup() {
+                const initialThemeKey = document.documentElement.classList.contains('dark') ? 'dark' : 'light';
+                const currentTheme = ref(WIDGET_THEMES[initialThemeKey]);
+                
+                const reactiveConfig = Vue.ref({ ...WIDGET_CONFIG, theme: WIDGET_THEMES[initialThemeKey] });
+
+                let timerSynth = null;
+                let countdownIntervalId = null;
+
+                const timerDuration = ref(0);
+                const timerRemaining = ref(0);
+                const isTimerRunning = ref(false);
+                const isSessionComplete = ref(false);
+                const isSessionTransitioning = ref(false);
+
+                const pomodorosPerSet = ref(reactiveConfig.value.pomodorosPerSet);
+                const currentPomodoroCycle = ref(0);
+                const currentSessionType = ref('work');
+
+                const applyTheme = (themeKey) => {
+                    if (WIDGET_THEMES[themeKey]) {
+                        currentTheme.value = WIDGET_THEMES[themeKey];
+                        reactiveConfig.value.theme = WIDGET_THEMES[themeKey]; 
+
+                        document.documentElement.className = themeKey; 
+                        if (themeKey === 'dark') {
+                            document.body.style.backgroundColor = '#0f172a'; // bg-slate-900 (remains correct)
+                            document.body.style.color = '#d1d5db'; // text-gray-300 (changed from #e2e8f0)
+                        } else { // Light theme
+                            document.body.style.backgroundColor = '#ffffff'; // Changed for bg-white
+                            document.body.style.color = '#1f2937'; // Changed for text-gray-800
+                        }
+                    } else {
+                        console.warn('Unknown theme key:', themeKey);
+                    }
+                };
+                
+                applyTheme(initialThemeKey);
+
+                const formatTimer_HMS = (totalSeconds) => {
+                    const hours = Math.floor(totalSeconds / 3600);
+                    const minutes = Math.floor((totalSeconds % 3600) / 60);
+                    const seconds = totalSeconds % 60;
+                    const pad = (num) => String(num).padStart(2, '0');
+                    if (hours > 0) { return `${pad(hours)}:${pad(minutes)}:${pad(seconds)}`; }
+                    return `${pad(minutes)}:${pad(seconds)}`;
+                };
+
+                const visualCycleGuide = computed(() => {
+                    const guide = [];
+                    for (let i = 0; i < pomodorosPerSet.value; i++) {
+                        guide.push({
+                            id: `work-${i}`, type: 'work', cycleIndex: i,
+                            shortLabel: `T${i + 1}`, fullLabel: `Travail ${i + 1}`, icon: 'fas fa-briefcase',
+                            isCurrent: currentSessionType.value === 'work' && currentPomodoroCycle.value === i && !isSessionTransitioning.value
+                        });
+                        if (i < pomodorosPerSet.value - 1) {
+                            guide.push({
+                                id: `shortBreak-${i}`, type: 'shortBreak', cycleIndex: i, 
+                                shortLabel: `PC`, fullLabel: `Pause Courte ${i + 1}`, icon: 'fas fa-coffee',
+                                isCurrent: currentSessionType.value === 'shortBreak' && currentPomodoroCycle.value === i && !isSessionTransitioning.value
+                            });
+                        }
+                    }
+                    guide.push({
+                        id: 'longBreak', type: 'longBreak', cycleIndex: pomodorosPerSet.value - 1, 
+                        shortLabel: 'PL', fullLabel: 'Pause Longue', icon: 'fas fa-couch',
+                        isCurrent: currentSessionType.value === 'longBreak' && !isSessionTransitioning.value
+                    });
+
+                    if (isSessionTransitioning.value) {
+                        guide.forEach(item => item.isCurrent = false); 
+                        let nextSessionIndex = -1;
+                        if (currentSessionType.value === 'work') { 
+                            if (currentPomodoroCycle.value >= pomodorosPerSet.value -1) { 
+                                nextSessionIndex = guide.findIndex(s => s.type === 'longBreak');
+                            } else { 
+                                 nextSessionIndex = guide.findIndex(s => s.type === 'shortBreak' && s.cycleIndex === currentPomodoroCycle.value);
+                            }
+                        } else if (currentSessionType.value === 'shortBreak') { 
+                             nextSessionIndex = guide.findIndex(s => s.type === 'work' && s.cycleIndex === currentPomodoroCycle.value + 1);
+                        } else { 
+                            nextSessionIndex = guide.findIndex(s => s.type === 'work' && s.cycleIndex === 0);
+                        }
+                        if (nextSessionIndex !== -1) guide[nextSessionIndex].isCurrent = true;
+                    }
+                    return guide;
+                });
+
+                const jumpToSession = (sessionToJumpTo) => {
+                    if (countdownIntervalId) clearInterval(countdownIntervalId);
+                    isTimerRunning.value = false;
+                    isSessionComplete.value = false;
+                    isSessionTransitioning.value = false;
+
+                    currentSessionType.value = sessionToJumpTo.type;
+                    currentPomodoroCycle.value = sessionToJumpTo.cycleIndex; 
+
+                    if (sessionToJumpTo.type === 'work') timerDuration.value = reactiveConfig.value.workDuration;
+                    else if (sessionToJumpTo.type === 'shortBreak') timerDuration.value = reactiveConfig.value.shortBreakDuration;
+                    else timerDuration.value = reactiveConfig.value.longBreakDuration;
+                    timerRemaining.value = timerDuration.value;
+                };
+                
+                const playTimerEndSound = () => {
+                    if (!timerSynth || !Tone || !Tone.now) return;
+                    if (Tone.context.state !== 'running') { Tone.start().catch(e=>console.warn(e)); return; }
+                    const now = Tone.now();
+                    const soundId = reactiveConfig.value.defaultSound;
+                    switch (soundId) {
+                        case 'chime': timerSynth.triggerAttackRelease("E5", "0.5s", now); timerSynth.triggerAttackRelease("A5", "0.5s", now + 0.4); timerSynth.triggerAttackRelease("C#6", "0.7s", now + 0.9); break;
+                        case 'wave': timerSynth.triggerAttackRelease("C4", "0.2s", now); timerSynth.triggerAttackRelease("E4", "0.2s", now + 0.2); timerSynth.triggerAttackRelease("G4", "0.2s", now + 0.4); timerSynth.triggerAttackRelease("C5", "0.3s", now + 0.6); break;
+                        case 'ding': timerSynth.triggerAttackRelease("A5", "0.8s", now); break;
+                        case 'beep': default: timerSynth.triggerAttackRelease("C5", "0.3s", now); timerSynth.triggerAttackRelease("G5", "0.3s", now + 0.4); break;
+                    }
+                };
+                
+                const advanceToNextSessionLogic = () => {
+                    let nextType = '';
+                    let nextCycleIndex = currentPomodoroCycle.value;
+
+                    if (currentSessionType.value === 'work') {
+                        if (currentPomodoroCycle.value >= pomodorosPerSet.value - 1) nextType = 'longBreak';
+                        else nextType = 'shortBreak';
+                    } else if (currentSessionType.value === 'shortBreak') {
+                        nextType = 'work';
+                        nextCycleIndex = currentPomodoroCycle.value + 1;
+                    } else { 
+                        nextType = 'work';
+                        nextCycleIndex = 0;
+                    }
+                    
+                    currentSessionType.value = nextType;
+                    currentPomodoroCycle.value = nextCycleIndex;
+                    isSessionTransitioning.value = true; 
+                    isSessionComplete.value = true; 
+
+                    if (nextType === 'work') timerDuration.value = reactiveConfig.value.workDuration;
+                    else if (nextType === 'shortBreak') timerDuration.value = reactiveConfig.value.shortBreakDuration;
+                    else timerDuration.value = reactiveConfig.value.longBreakDuration;
+                    timerRemaining.value = timerDuration.value;
+                };
+
+                const startPauseResumeTimer = () => {
+                    if (Tone && Tone.context && Tone.context.state !== 'running') {
+                        Tone.start().catch(e => console.warn("AudioContext error:", e));
+                    }
+
+                    if (isTimerRunning.value) { 
+                        clearInterval(countdownIntervalId);
+                        isTimerRunning.value = false;
+                    } else { 
+                        if (reactiveConfig.value.workDuration === 0) return;
+                        
+                        isSessionTransitioning.value = false; 
+                        isSessionComplete.value = false; 
+
+                        if (currentSessionType.value === 'work') timerDuration.value = reactiveConfig.value.workDuration;
+                        else if (currentSessionType.value === 'shortBreak') timerDuration.value = reactiveConfig.value.shortBreakDuration;
+                        else timerDuration.value = reactiveConfig.value.longBreakDuration;
+                        
+                        if (timerRemaining.value <= 0) timerRemaining.value = timerDuration.value;
+
+                        if (timerRemaining.value > 0) {
+                            isTimerRunning.value = true;
+                            countdownIntervalId = setInterval(() => {
+                                timerRemaining.value--;
+                                if (timerRemaining.value <= 0) {
+                                    clearInterval(countdownIntervalId);
+                                    isTimerRunning.value = false;
+                                    playTimerEndSound();
+                                    advanceToNextSessionLogic(); 
+                                    nextTick(() => { 
+                                        setTimeout(() => {
+                                            if (isSessionTransitioning.value) startPauseResumeTimer(); 
+                                        }, 1500); 
+                                    });
+                                }
+                            }, 1000);
+                        }
+                    }
+                };
+                
+                const skipSession = () => {
+                    if (isTimerRunning.value) return;
+                    if (countdownIntervalId) clearInterval(countdownIntervalId);
+                    isTimerRunning.value = false;
+                    playTimerEndSound(); 
+                    advanceToNextSessionLogic();
+                    isSessionTransitioning.value = false; 
+                };
+
+                const resetTimer = () => {
+                    if (countdownIntervalId) clearInterval(countdownIntervalId); 
+                    isTimerRunning.value = false;
+                    isSessionComplete.value = false;
+                    isSessionTransitioning.value = false;
+                    currentSessionType.value = 'work';
+                    currentPomodoroCycle.value = 0;
+                    timerDuration.value = reactiveConfig.value.workDuration; 
+                    timerRemaining.value = reactiveConfig.value.workDuration;
+                };
+
+
+                onMounted(() => {
+                    if (typeof Tone !== 'undefined') {
+                        timerSynth = new Tone.Synth().toDestination();
+                        if (Tone.context.state !== 'running') {
+                             document.body.addEventListener('click', () => Tone.start().catch(e=>console.warn(e)), { once: true });
+                        }
+                    }
+                    pomodorosPerSet.value = Math.max(1, parseInt(reactiveConfig.value.pomodorosPerSet) || 4); 
+                    resetTimer(); 
+
+                    window.addEventListener('message', (event) => {
+                        // IMPORTANT: Add origin check for security in production
+                        // if (event.origin !== 'https://your-main-page-domain.com') return;
+
+                        if (event.data && event.data.type === 'themeChange') {
+                            applyTheme(event.data.theme); 
+                        }
+                    });
+                    
+                    if (window.parent && window.parent !== window) {
+                        console.log("Pomodoro widget: Requesting initial theme from parent.");
+                        window.parent.postMessage({ type: 'pomodoroWidgetReadyForTheme' }, '*');
+                    }
+                });
+
+                onBeforeUnmount(() => {
+                    if (countdownIntervalId) clearInterval(countdownIntervalId);
+                });
+
+                return {
+                    config: reactiveConfig, 
+                    currentTheme,
+                    timerDuration, timerRemaining, isTimerRunning, isSessionComplete, isSessionTransitioning,
+                    currentSessionType, currentPomodoroCycle, pomodorosPerSet,
+                    visualCycleGuide, jumpToSession, 
+                    startPauseResumeTimer, resetTimer, skipSession,
+                    formatTimer_HMS,
+                };
+            }
+        }).mount('#app-widget');
+    </script>
+</body>
+</html>

@@ -344,6 +344,25 @@
             background-color: #1f2937; 
         }
 
+        .pomodoro-widget-container {
+            /* Ensures the container itself doesn't introduce unwanted padding or borders */
+            padding: 0;
+            border: none; /* Overriding default widget-card border if not desired */
+            overflow: hidden; /* To contain the iframe nicely */
+            display: flex; /* To help with centering/sizing the iframe if needed */
+            align-items: stretch; /* Make iframe take full height */
+            justify-content: stretch; /* Make iframe take full width */
+        }
+
+        .pomodoro-iframe {
+            display: block; /* Iframes are inline by default */
+            width: 100%;
+            height: 100%;
+            border: none; /* Ensure no iframe border */
+            min-height: 280px; /* Keep the min-height specified before */
+        }
+   
+        
     </style>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
 </head>
@@ -378,6 +397,10 @@
                         </button>
                     </div>
                     <div id="noteProcessingStatus" class="text-xs text-gray-500 dark:text-gray-400 mt-1 h-4"></div>
+                </div>
+
+                <div class="widget-card pomodoro-widget-container p-0 md:col-span-2 lg:col-span-1">
+                    <iframe id="pomodoroWidgetFrame" class="pomodoro-iframe" src="pomodoro.html" style="border:none; width:100%; height:100%; min-height: 280px;"></iframe>
                 </div>
                 
                 <div class="widget-card weather-widget-container p-0 md:col-span-2 lg:col-span-1">
@@ -500,6 +523,22 @@
                 if(darkModeToggle) darkModeToggle.innerHTML = '<i class="fas fa-moon text-gray-700 dark:text-gray-300"></i>';
             }
             console.log('HTML classes AFTER applyDarkMode:', htmlElement.className);
+
+            // Send theme change message to Pomodoro widget iframe
+            const pomodoroFrame = document.getElementById('pomodoroWidgetFrame');
+            if (pomodoroFrame) {
+                // Check if contentWindow is available, might not be if iframe hasn't loaded
+                if (pomodoroFrame.contentWindow) {
+                    pomodoroFrame.contentWindow.postMessage({
+                        type: 'themeChange',
+                        theme: isDark ? 'dark' : 'light'
+                    }, '*'); // Consider specifying the target origin for better security
+                } else {
+                    // Optional: Handle cases where iframe isn't ready (e.g., try again later, or on iframe load event)
+                    console.warn('Pomodoro iframe contentWindow not available yet for theme change.');
+                }
+            }
+            
             updateWeatherWidgetTheme(isDark);
         }
 
@@ -887,6 +926,27 @@
             loadLinks();
             startClock();
             loadNotes();
+
+            // Listen for the Pomodoro widget to be ready for theme information
+            window.addEventListener('message', (event) => {
+                // IMPORTANT: In a production environment, you should always verify event.origin
+                // to ensure messages are coming from the expected source.
+                // For example: if (event.origin !== 'expected_origin_of_pomodoro.html') return;
+
+                const pomodoroFrame = document.getElementById('pomodoroWidgetFrame');
+                
+                // Check if the message is from our pomodoro iframe and is the ready signal
+                if (pomodoroFrame && event.source === pomodoroFrame.contentWindow && event.data && event.data.type === 'pomodoroWidgetReadyForTheme') {
+                    console.log("Main page: Received theme request from Pomodoro widget. Sending current theme.");
+                    const isDark = document.documentElement.classList.contains('dark');
+                    if (pomodoroFrame.contentWindow) { // Double check contentWindow before posting
+                        pomodoroFrame.contentWindow.postMessage({
+                            type: 'themeChange',
+                            theme: isDark ? 'dark' : 'light'
+                        }, '*'); // Consider specifying the target origin for the iframe for better security.
+                    }
+                }
+            });
         });
 
     </script>
