@@ -1,539 +1,775 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" class="h-full">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="author" content="NiwatoriChan">
     <title>Custom New Tab</title>
+
+    <!-- Tailwind CSS CDN with class-based dark mode configuration -->
     <script src="https://cdn.tailwindcss.com"></script>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" xintegrity="sha512-9usAa10IRO0HhonpyAIVpjrylPvoDwiPUiKdWk5t3PyolY1cOd4DSE0Ga+ri4AuTroPR5aQvXU9xC6qOPnzFeg==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Inter', 'system-ui', '-apple-system', 'sans-serif'],
+                    }
+                }
+            }
+        };
+    </script>
+
+    <!-- Google Fonts: Inter -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+    <!-- Font Awesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" crossorigin="anonymous" referrerpolicy="no-referrer" />
+
     <style>
-        body {
-            font-family: 'Inter', sans-serif;
-            background-color: #f3f4f6; /* Tailwind gray-100 - Light mode default */
-            color: #1f2937; /* Tailwind gray-800 - Light mode default text */
-        }
-        .dark body { /* Activated when <html> has .dark class */
-            background-color: #111827; /* Tailwind gray-900 */
-            color: #d1d5db; /* Tailwind text-gray-300 */
-        }
-
-        /* Custom style for section titles */
-        .custom-section-title {
-            color: #000000; /* Black for light mode */
-        }
-        .dark .custom-section-title {
-            color: #e5e7eb; /* Tailwind's gray-200 for dark mode */
-        }
-
-        .main-container {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            width: 100%;
-            max-width: 1024px;
-            margin: 0 auto;
-            padding: 0.5rem;
-        }
-        @media (min-width: 640px) {
-            .main-container {
-                padding: 1rem;
-                max-width: 1280px;
-            }
-        }
-        .widgets-section {
-            width: 100%;
-            margin-bottom: 2rem;
-        }
-        .widget-card {
-            background-color: #ffffff; /* Light mode card background */
-            border-radius: 0.5rem;
-            padding: 1rem;
-            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
-            border: 1px solid #e5e7eb; /* Light mode border */
-            display: flex;
-            flex-direction: column;
-        }
-        .dark .widget-card { /* Dark mode card styles */
-            background-color: #1f2937;
-            border-color: #374151;
-        }
-        .clock-widget {
-            justify-content: center;
-            align-items: center;
-            text-align: center;
-            min-height: 100px;
-        }
-        .clock-widget .time {
-            font-size: 2.5rem;
-            font-weight: 600;
-            color: #1f2937; /* Explicit light mode color */
-        }
-        .dark .clock-widget .time {
-            color: #f3f4f6; /* Dark mode color */
-        }
-        .clock-widget .date {
-            font-size: 1rem;
-            color: #4b5563; /* Explicit light mode color */
-        }
-        .dark .clock-widget .date {
-            color: #9ca3af; /* Dark mode color */
-        }
-        .notes-widget {
-            min-height: 150px;
-        }
-        .notes-widget textarea {
-            flex-grow: 1;
-            border: 1px solid #d1d5db; /* Light mode border */
-            background-color: #ffffff; /* Light mode background */
-            color: #111827; /* Light mode text */
-            border-radius: 0.375rem;
-            padding: 0.5rem;
-            font-size: 0.875rem;
-            margin-bottom: 0.5rem;
-            resize: vertical;
-            min-height: 80px;
-            outline: none;
-        }
-        .dark .notes-widget textarea { /* Dark mode textarea */
-            border-color: #4b5563; 
-            background-color: #374151; 
-            color: #f3f4f6; 
-        }
-        .notes-widget textarea::placeholder { /* Light mode placeholder */
-            color: #6b7280; 
-        }
-        .dark .notes-widget textarea::placeholder { /* Dark mode placeholder */
-            color: #9ca3af; 
-        }
-        .notes-widget textarea:focus {
-            border-color: #3b82f6;
-            box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.3);
-        }
-        .dark .notes-widget textarea:focus {
-            border-color: #3b82f6;
-            box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.4);
-        }
-        .weather-widget-container {
-            padding: 0;
-            min-height: 100px;
-        }
-        .quick-link {
-            position: relative;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            padding: 0.5rem;
-            background-color: #f9fafb; /* Default light */
-            border: 1px solid #e5e7eb; /* Default light */
-            color: #1f2937; /* Default light text */
-            border-radius: 0.5rem;
-            text-align: center;
-            transition: transform 0.2s ease, box-shadow 0.2s ease, opacity 0.2s ease, background-color 0.2s ease, border-color 0.2s ease;
-            text-decoration: none;
-            overflow: hidden;
-            aspect-ratio: 1 / 1;
-            cursor: grab;
-        }
-        @media (min-width: 640px) {
-            .quick-link {
-                padding: 0.75rem;
-            }
-        }
-        @media (min-width: 768px) {
-            .quick-link {
-                padding: 1rem;
-            }
-        }
-        .dark .quick-link {
-            background-color: #374151;
-            border-color: #4b5563;
-            color: #f3f4f6;
-        }
-        .quick-link:active {
-            cursor: grabbing;
-        }
+        /* Minimal custom styles for drag-and-drop states and custom scrollbars */
         .quick-link.dragging {
-            opacity: 0.5;
-            cursor: grabbing;
+            opacity: 0.4;
+            transform: scale(0.95);
         }
         .quick-link.drag-over {
-            border: 2px dashed #3b82f6;
+            border-color: #3b82f6 !important;
+            border-style: dashed !important;
+            background-color: rgba(59, 130, 246, 0.08) !important;
         }
-        .dark .quick-link.drag-over {
-            border-color: #60a5fa;
+        /* Subtle custom scrollbar for notes and location dropdown */
+        ::-webkit-scrollbar {
+            width: 6px;
+            height: 6px;
         }
-        .quick-link:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 3px 8px rgba(0,0,0,0.08);
-            background-color: #ffffff; /* Light hover */
-            border-color: #d1d5db; /* Light hover */
+        ::-webkit-scrollbar-track {
+            background: transparent;
         }
-        .dark .quick-link:hover {
-            background-color: #4b5563; /* Dark hover */
-            border-color: #4b5563; 
-            box-shadow: 0 4px 10px rgba(0,0,0,0.15);
-            transform: translateY(-2px); 
+        ::-webkit-scrollbar-thumb {
+            background: rgba(156, 163, 175, 0.4);
+            border-radius: 9999px;
         }
-        .quick-link img.favicon, .quick-link .default-favicon-container {
-            width: 2rem;
-            height: 2rem;
-            margin-bottom: 0.5rem;
-            pointer-events: none;
+        ::-webkit-scrollbar-thumb:hover {
+            background: rgba(156, 163, 175, 0.7);
         }
-        .quick-link img.favicon {
-            border-radius: 0.25rem;
-            object-fit: contain;
-        }
-         .quick-link span.link-name {
-            font-size: 0.75rem;
-            line-height: 1rem;
-            overflow: hidden;
-            text-overflow: ellipsis;
-            white-space: nowrap;
-            width: 100%;
-            pointer-events: none;
-        }
-        .delete-link-btn {
-            position: absolute;
-            top: 1px;
-            right: 1px;
-            width: 1.5rem;
-            height: 1.5rem;
-            background-color: rgba(239, 68, 68, 0.8);
-            color: white;
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 0.75rem;
-            cursor: pointer;
-            opacity: 0;
-            transition: opacity 0.2s ease, background-color 0.2s ease;
-            z-index: 10;
-        }
-        @media (min-width: 640px) {
-            .delete-link-btn {
-                top: 2px;
-                right: 2px;
-                width: 1.25rem;
-                height: 1.25rem;
-                font-size: 0.65rem;
-            }
-        }
-        .dark .delete-link-btn {
-            background-color: rgba(239, 68, 68, 0.7);
-        }
-        .quick-link:hover .delete-link-btn {
-            opacity: 1;
-        }
-        .delete-link-btn:hover {
-            background-color: #dc2626;
-        }
-        .dark .delete-link-btn:hover {
-            background-color: #ef4444;
-        }
-        .add-link-button {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            padding: 0.5rem;
-            background-color: #ffffff; /* Default light */
-            border: 2px dashed #d1d5db; /* Default light */
-            color: #6b7280; /* Default light text */
-            border-radius: 0.5rem;
-            text-align: center;
-            transition: border-color 0.2s ease, background-color 0.2s ease;
-            cursor: pointer;
-            aspect-ratio: 1 / 1;
-        }
-         @media (min-width: 640px) {
-            .add-link-button {
-                padding: 0.75rem;
-            }
-        }
-        @media (min-width: 768px) {
-            .add-link-button {
-                padding: 1rem;
-            }
-        }
-        .dark .add-link-button {
-            background-color: #1f2937;
-            border-color: #4b5563;
-            color: #9ca3af;
-        }
-        .add-link-button:hover {
-            border-color: #9ca3af; /* Light hover */
-            background-color: #f9fafb; /* Light hover */
-        }
-        .dark .add-link-button:hover {
-            border-color: #6b7280; /* Dark hover */
-            background-color: #374151; /* Dark hover */
-        }
-        .add-link-button i {
-            font-size: 1.25rem;
-            margin-bottom: 0.25rem;
-        }
-        @media (min-width: 640px) {
-            .add-link-button i {
-                font-size: 1.5rem;
-                margin-bottom: 0.5rem;
-            }
-        }
-         .add-link-button span {
-            font-size: 0.75rem;
-            line-height: 1rem;
-        }
-        .modal { background-color: rgba(0, 0, 0, 0.5); }
-        .dark .modal { background-color: rgba(0, 0, 0, 0.7); }
-        .modal-content {
-            max-width: 400px;
-            width: 90%;
-            background-color: #ffffff; /* Light mode modal content */
-        }
-        .dark .modal-content {
-             background-color: #1f2937; /* Dark mode modal content */
-        }
-        .default-favicon-container {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            background-color: #e5e7eb; /* Light mode */
-            color: #9ca3af; /* Light mode */
-            border-radius: 0.25rem;
-            pointer-events: none;
-        }
-        .dark .default-favicon-container {
-            background-color: #374151; /* Dark mode */
-            color: #9ca3af; /* Dark mode */
-        }
-
-        /* Specific styles for search input */
-        #searchForm input[name="q"] {
-            background-color: #ffffff;
-            color: #1f2937;
-            border: 1px solid #d1d5db; 
-        }
-        .dark #searchForm input[name="q"] {
-            background-color: #374151; 
-            color: #f3f4f6;
-            border: 1px solid #4b5563; 
-        }
-         #searchForm input[name="q"]::placeholder {
-            color: #6b7280; 
-        }
-        .dark #searchForm input[name="q"]::placeholder {
-            color: #9ca3af; 
-        }
-
-
-        /* Specific styles for Quick Links container */
-        #quickLinksSectionContainer {
-            background-color: #ffffff; /* Light mode */
-            padding: 1rem; 
-            border-radius: 0.5rem; 
-            box-shadow: 0 1px 3px rgba(0,0,0,0.1); 
-        }
-        @media (min-width: 640px) { 
-             #quickLinksSectionContainer {
-                padding: 1.5rem; 
-             }
-        }
-        .dark #quickLinksSectionContainer {
-            background-color: #1f2937; 
-        }
-
     </style>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
 </head>
-<body class="flex flex-col items-center min-h-screen">
+<body class="bg-slate-100 dark:bg-slate-950 text-slate-800 dark:text-slate-100 min-h-screen transition-colors duration-200 selection:bg-blue-500 selection:text-white">
 
-    <div class="main-container">
-        <div class="w-full flex justify-end mb-2">
-            <button id="darkModeToggle" class="p-2 rounded-full focus:outline-none text-xl hover:bg-gray-200 dark:hover:bg-gray-700">
-            </button>
-        </div>
-        <form id="searchForm" class="flex w-full mb-6" action="https://www.google.com/search" method="get" target="_blank">
-            <input type="text" name="q" placeholder="Search Google..." class="flex-grow p-3 rounded-l-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent text-base sm:text-lg" required>
-            <button type="submit" class="bg-blue-500 dark:bg-blue-600 text-white p-3 rounded-r-md hover:bg-blue-600 dark:hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 dark:focus:ring-blue-400 focus:ring-offset-1">
-                <i class="fas fa-search"></i>
-            </button>
-        </form>
+    <!-- Main Container -->
+    <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-10 flex flex-col gap-8">
 
-        <div class="widgets-section">
-            <h2 class="text-lg sm:text-xl font-semibold custom-section-title mb-3 sm:mb-4">Widgets</h2>
-            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 gap-3 sm:gap-4">
-                <div class="widget-card clock-widget p-3 sm:p-4">
-                    <div id="timeDisplay" class="time text-3xl sm:text-4xl">--:--:--</div>
-                    <div id="dateDisplay" class="date text-sm sm:text-base">----------</div>
+        <!-- Header: Greeting, Search Bar & Theme Toggle -->
+        <header class="flex flex-col gap-5">
+            <div class="flex items-center justify-between">
+                <div class="flex items-center gap-2.5">
+                    <div class="w-9 h-9 rounded-xl bg-blue-600 text-white flex items-center justify-center shadow-sm shadow-blue-500/20">
+                        <i class="fas fa-compass text-lg"></i>
+                    </div>
+                    <div>
+                        <h1 id="greetingText" class="text-lg sm:text-xl font-semibold tracking-tight text-slate-900 dark:text-white">Welcome back</h1>
+                        <p class="text-xs text-slate-500 dark:text-slate-400">Your personal start page</p>
+                    </div>
                 </div>
 
-                <div class="widget-card notes-widget p-3 sm:p-4">
-                    <h3 class="text-sm font-medium text-gray-600 dark:text-gray-400 mb-1">Quick Notes</h3>
-                    <textarea id="notesTextArea" placeholder="Write something..." class="text-sm"></textarea>
-                    <div class="flex justify-start items-center mt-2">
-                        <button id="saveNotesBtn" class="text-xs py-1 px-2 sm:text-sm bg-blue-500 text-white rounded hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-1 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-400">
-                            <i class="fas fa-save mr-1"></i> Save
+                <!-- Theme Toggle Button -->
+                <button id="darkModeToggle" type="button" aria-label="Toggle Dark Mode" title="Toggle theme"
+                    class="w-10 h-10 rounded-xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 text-slate-600 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-800 hover:border-slate-300 dark:hover:border-slate-700 flex items-center justify-center shadow-sm transition-all focus:outline-none focus:ring-2 focus:ring-blue-500">
+                    <i class="fas fa-moon text-base"></i>
+                </button>
+            </div>
+
+            <!-- Google Search Bar -->
+            <form id="searchForm" action="https://www.google.com/search" method="get" target="_blank" class="relative group">
+                <div class="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-4 text-slate-400 group-focus-within:text-blue-500 transition-colors">
+                    <i class="fab fa-google text-lg"></i>
+                </div>
+                <input type="text" id="searchInput" name="q" placeholder="Search Google or type a query..." required autocomplete="off"
+                    class="w-full pl-12 pr-28 py-3.5 sm:py-4 bg-white dark:bg-slate-900 border border-slate-200/90 dark:border-slate-800 rounded-2xl shadow-sm text-slate-900 dark:text-slate-100 placeholder-slate-400 dark:placeholder-slate-500 text-base focus:outline-none focus:ring-2 focus:ring-blue-500/50 focus:border-blue-500 transition-all">
+                <div class="absolute inset-y-1.5 right-1.5 flex items-center gap-1.5">
+                    <kbd class="hidden sm:inline-flex items-center px-2 py-1 text-xs font-mono text-slate-400 dark:text-slate-500 bg-slate-100 dark:bg-slate-800 rounded-lg border border-slate-200 dark:border-slate-700 pointer-events-none">
+                        /
+                    </kbd>
+                    <button type="submit"
+                        class="px-4 py-2 sm:py-2.5 bg-blue-600 hover:bg-blue-700 active:bg-blue-800 text-white font-medium text-sm rounded-xl shadow-sm transition-colors focus:outline-none focus:ring-2 focus:ring-blue-500">
+                        Search
+                    </button>
+                </div>
+            </form>
+        </header>
+
+        <!-- Widgets Section -->
+        <section aria-labelledby="widgets-heading">
+            <div class="flex items-center justify-between mb-3">
+                <h2 id="widgets-heading" class="text-xs font-semibold uppercase tracking-wider text-slate-500 dark:text-slate-400">
+                    Dashboard Widgets
+                </h2>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-5">
+
+                <!-- 1. Clock Widget -->
+                <div class="bg-white dark:bg-slate-900 border border-slate-200/80 dark:border-slate-800 rounded-2xl p-5 shadow-sm flex flex-col justify-between min-h-[210px]">
+                    <div class="flex items-center justify-between text-xs font-medium text-slate-400 dark:text-slate-500">
+                        <span class="flex items-center gap-1.5">
+                            <i class="far fa-clock text-blue-500"></i>
+                            Local Time
+                        </span>
+                        <button id="timeFormatToggle" type="button" title="Switch 12h / 24h format"
+                            class="px-2 py-0.5 rounded-md bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-700 transition-colors">
+                            24H
                         </button>
                     </div>
-                    <div id="noteProcessingStatus" class="text-xs text-gray-500 dark:text-gray-400 mt-1 h-4"></div>
-                </div>
-                
-                <div class="widget-card weather-widget-container p-0 md:col-span-2 lg:col-span-1">
-                    <a class="weatherwidget-io" href="https://forecast7.com/en/51d51n0d13/london/" data-label_1="LONDON" data-label_2="WEATHER" data-theme="pure" data-basecolor="ffffff" data-textcolor="#374151" data-lowcolor="#3b82f6" data-highcolor="#ef4444" style="display: block; position: relative; height: 100%; padding: 0 !important; margin: 0 !important;">LONDON WEATHER</a>
-                </div>
-            </div>
-        </div>
 
-        <div id="quickLinksSectionContainer" class="w-full">
-            <h2 class="text-lg sm:text-xl font-semibold custom-section-title mb-3 sm:mb-4">Quick Links</h2>
-            <div id="quickLinksGrid" class="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-5 lg:grid-cols-6 xl:grid-cols-8 gap-2 sm:gap-3 md:gap-4">
+                    <div class="my-auto py-3 text-center">
+                        <div id="timeDisplay" class="text-4xl sm:text-5xl font-bold tracking-tight tabular-nums text-slate-900 dark:text-white">
+                            --:--:--
+                        </div>
+                        <div id="dateDisplay" class="mt-2 text-sm font-medium text-slate-500 dark:text-slate-400">
+                            Loading date...
+                        </div>
+                    </div>
+
+                    <div class="flex items-center justify-center gap-2 text-xs text-slate-400 dark:text-slate-500 border-t border-slate-100 dark:border-slate-800/80 pt-3">
+                        <i class="fas fa-globe-americas"></i>
+                        <span id="timezoneDisplay">Detecting timezone...</span>
+                    </div>
+                </div>
+
+                <!-- 2. User-Selectable Weather Widget -->
+                <div class="bg-white dark:bg-slate-900 border border-slate-200/80 dark:border-slate-800 rounded-2xl p-5 shadow-sm flex flex-col justify-between min-h-[210px] relative overflow-hidden">
+                    <!-- Top Header: Location & Controls -->
+                    <div class="flex items-center justify-between gap-2">
+                        <button id="openWeatherSearchBtn" type="button" title="Change weather location"
+                            class="group flex items-center gap-1.5 text-left max-w-[70%] focus:outline-none">
+                            <i class="fas fa-location-dot text-blue-500 text-sm shrink-0"></i>
+                            <span id="weatherLocationName" class="text-sm font-semibold text-slate-800 dark:text-slate-100 truncate group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors">
+                                Select Location
+                            </span>
+                            <i class="fas fa-chevron-down text-[10px] text-slate-400 group-hover:text-blue-500 transition-colors shrink-0"></i>
+                        </button>
+
+                        <div class="flex items-center gap-1">
+                            <button id="tempUnitToggle" type="button" title="Toggle Celsius / Fahrenheit"
+                                class="px-2 py-0.5 text-xs font-medium rounded-md bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-700 transition-colors">
+                                °C
+                            </button>
+                            <button id="refreshWeatherBtn" type="button" title="Refresh weather"
+                                class="w-7 h-7 rounded-md text-xs text-slate-400 hover:text-slate-700 dark:hover:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-800 flex items-center justify-center transition-colors">
+                                <i class="fas fa-rotate-right"></i>
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Main Weather Content -->
+                    <div id="weatherMainDisplay" class="my-auto py-2 flex items-center justify-between">
+                        <div>
+                            <div class="flex items-baseline gap-2">
+                                <span id="weatherTemp" class="text-4xl font-bold tracking-tight text-slate-900 dark:text-white">--°</span>
+                                <span id="weatherHighLow" class="text-xs font-medium text-slate-400 dark:text-slate-500">H:--° L:--°</span>
+                            </div>
+                            <p id="weatherConditionText" class="text-sm font-medium text-slate-600 dark:text-slate-300 mt-0.5">
+                                Loading weather...
+                            </p>
+                        </div>
+                        <div id="weatherIconContainer" class="w-14 h-14 rounded-2xl bg-blue-50 dark:bg-slate-800/90 flex items-center justify-center text-3xl text-blue-500">
+                            <i class="fas fa-cloud-sun"></i>
+                        </div>
+                    </div>
+
+                    <!-- Bottom Weather Metrics -->
+                    <div class="grid grid-cols-2 gap-2 pt-3 border-t border-slate-100 dark:border-slate-800/80 text-xs text-slate-500 dark:text-slate-400">
+                        <div class="flex items-center gap-1.5">
+                            <i class="fas fa-droplet text-blue-400"></i>
+                            <span>Humidity: <strong id="weatherHumidity" class="text-slate-700 dark:text-slate-200 font-medium">--%</strong></span>
+                        </div>
+                        <div class="flex items-center gap-1.5">
+                            <i class="fas fa-wind text-slate-400"></i>
+                            <span>Wind: <strong id="weatherWind" class="text-slate-700 dark:text-slate-200 font-medium">-- km/h</strong></span>
+                        </div>
+                    </div>
+
+                    <!-- Slide-over Location Search Overlay inside the Weather Card -->
+                    <div id="weatherSearchOverlay" class="hidden absolute inset-0 bg-white dark:bg-slate-900 p-4 flex flex-col z-20">
+                        <div class="flex items-center justify-between mb-2.5">
+                            <span class="text-xs font-semibold uppercase tracking-wider text-slate-500 dark:text-slate-400">
+                                Choose Location
+                            </span>
+                            <button id="closeWeatherSearchBtn" type="button" aria-label="Close location search"
+                                class="w-6 h-6 rounded-lg text-slate-400 hover:text-slate-700 dark:hover:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-800 flex items-center justify-center">
+                                <i class="fas fa-times text-xs"></i>
+                            </button>
+                        </div>
+
+                        <div class="flex gap-1.5 mb-2">
+                            <div class="relative flex-grow">
+                                <input type="text" id="weatherCityInput" placeholder="Search city (e.g. Paris, Tokyo)..." autocomplete="off"
+                                    class="w-full pl-3 pr-8 py-1.5 text-sm bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl text-slate-900 dark:text-slate-100 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-blue-500">
+                                <i class="fas fa-search absolute right-2.5 top-2.5 text-xs text-slate-400 pointer-events-none"></i>
+                            </div>
+                            <button id="useGeolocationBtn" type="button" title="Use my current location"
+                                class="px-2.5 py-1.5 bg-blue-50 dark:bg-blue-950/60 text-blue-600 dark:text-blue-400 hover:bg-blue-100 dark:hover:bg-blue-900/60 rounded-xl text-xs font-medium shrink-0 transition-colors flex items-center gap-1">
+                                <i class="fas fa-location-crosshairs"></i>
+                            </button>
+                        </div>
+
+                        <div id="weatherSearchResults" class="flex-grow overflow-y-auto divide-y divide-slate-100 dark:divide-slate-800 text-xs">
+                            <p class="text-slate-400 dark:text-slate-500 py-3 text-center">Type a city name to search...</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 3. Quick Notes Widget -->
+                <div class="bg-white dark:bg-slate-900 border border-slate-200/80 dark:border-slate-800 rounded-2xl p-5 shadow-sm flex flex-col justify-between min-h-[210px] md:col-span-2 lg:col-span-1">
+                    <div class="flex items-center justify-between mb-2">
+                        <label for="notesTextArea" class="flex items-center gap-1.5 text-xs font-medium text-slate-400 dark:text-slate-500 cursor-pointer">
+                            <i class="far fa-note-sticky text-amber-500"></i>
+                            Quick Notes
+                        </label>
+                        <div class="flex items-center gap-2">
+                            <span id="noteProcessingStatus" class="text-xs text-emerald-600 dark:text-emerald-400 font-medium transition-opacity duration-200"></span>
+                            <button id="saveNotesBtn" type="button"
+                                class="px-2.5 py-1 text-xs font-medium bg-blue-600 hover:bg-blue-700 text-white rounded-lg transition-colors flex items-center gap-1 shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500">
+                                <i class="fas fa-check text-[10px]"></i>
+                                <span>Save</span>
+                            </button>
+                        </div>
+                    </div>
+
+                    <textarea id="notesTextArea" placeholder="Jot down a quick reminder, task, or thought..."
+                        class="w-full flex-grow bg-slate-50 dark:bg-slate-800/60 border border-slate-200/80 dark:border-slate-800 rounded-xl p-3 text-sm text-slate-800 dark:text-slate-100 placeholder-slate-400 dark:placeholder-slate-500 resize-none focus:outline-none focus:ring-2 focus:ring-blue-500/40 focus:border-blue-500 transition-all"></textarea>
+                </div>
+
             </div>
-        </div>
+        </section>
+
+        <!-- Quick Links Section -->
+        <section aria-labelledby="quicklinks-heading" class="bg-white dark:bg-slate-900 border border-slate-200/80 dark:border-slate-800 rounded-2xl p-5 sm:p-6 shadow-sm">
+            <div class="flex items-center justify-between mb-4">
+                <div>
+                    <h2 id="quicklinks-heading" class="text-base font-semibold text-slate-900 dark:text-white">
+                        Quick Links
+                    </h2>
+                    <p class="text-xs text-slate-400 dark:text-slate-500">Drag and drop tiles to reorder your shortcuts</p>
+                </div>
+                <button id="headerAddLinkBtn" type="button"
+                    class="px-3 py-1.5 text-xs font-medium bg-slate-100 dark:bg-slate-800 hover:bg-blue-600 hover:text-white dark:hover:bg-blue-600 text-slate-700 dark:text-slate-200 rounded-xl transition-colors flex items-center gap-1.5">
+                    <i class="fas fa-plus"></i>
+                    <span>Add Shortcut</span>
+                </button>
+            </div>
+
+            <div id="quickLinksGrid" class="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-6 lg:grid-cols-8 gap-3 sm:gap-4">
+                <!-- Populated dynamically via JS -->
+            </div>
+        </section>
+
     </div>
 
-    <div id="addLinkModal" class="modal fixed inset-0 flex items-center justify-center hidden z-50 p-4">
-        <div class="modal-content p-4 sm:p-6 rounded-lg shadow-xl w-full"> 
-            <h3 class="text-base sm:text-lg font-semibold mb-3 sm:mb-4 text-gray-900 dark:text-gray-100">Add a new link</h3>
-            <form id="addLinkForm">
-                <div class="mb-3 sm:mb-4">
-                    <label for="linkUrl" class="block text-xs sm:text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">URL</label>
-                    <input type="text" id="linkUrl" name="linkUrl" placeholder="example.com" class="w-full p-2 text-sm sm:text-base border border-gray-300 bg-white text-gray-900 placeholder-gray-500 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-100 dark:placeholder-gray-400 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500" required>
+    <!-- Add Link Modal -->
+    <div id="addLinkModal" class="fixed inset-0 bg-slate-950/60 backdrop-blur-xs flex items-center justify-center hidden z-50 p-4">
+        <div class="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl p-6 shadow-xl max-w-md w-full animate-fade-in">
+            <div class="flex items-center justify-between mb-4">
+                <h3 class="text-base font-semibold text-slate-900 dark:text-white">Add Quick Link</h3>
+                <button type="button" id="closeAddLinkIconBtn" class="text-slate-400 hover:text-slate-600 dark:hover:text-slate-200">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+
+            <form id="addLinkForm" class="space-y-4">
+                <div>
+                    <label for="linkName" class="block text-xs font-medium text-slate-600 dark:text-slate-300 mb-1">
+                        Site Name
+                    </label>
+                    <input type="text" id="linkName" name="linkName" placeholder="e.g. GitHub" required
+                        class="w-full px-3.5 py-2.5 text-sm bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl text-slate-900 dark:text-white placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-blue-500">
                 </div>
-                <div class="mb-3 sm:mb-4">
-                    <label for="linkName" class="block text-xs sm:text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Site name (required)</label>
-                    <input type="text" id="linkName" name="linkName" class="w-full p-2 text-sm sm:text-base border border-gray-300 bg-white text-gray-900 placeholder-gray-500 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-100 dark:placeholder-gray-400 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500" required>
+
+                <div>
+                    <label for="linkUrl" class="block text-xs font-medium text-slate-600 dark:text-slate-300 mb-1">
+                        Website URL
+                    </label>
+                    <input type="text" id="linkUrl" name="linkUrl" placeholder="e.g. github.com" required
+                        class="w-full px-3.5 py-2.5 text-sm bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl text-slate-900 dark:text-white placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-blue-500">
                 </div>
-                <div class="flex justify-end space-x-2">
-                    <button type="button" id="cancelAddLinkBtn" class="px-3 py-2 sm:px-4 text-xs sm:text-sm bg-gray-300 text-gray-700 hover:bg-gray-400 dark:bg-gray-600 dark:text-gray-200 dark:hover:bg-gray-500 rounded-md">Cancel</button>
-                    <button type="submit" class="px-3 py-2 sm:px-4 text-xs sm:text-sm bg-blue-500 text-white hover:bg-blue-600 dark:bg-blue-600 dark:hover:bg-blue-700 rounded-md">Add</button>
+
+                <p id="addLinkError" class="text-xs text-red-500 hidden"></p>
+
+                <div class="flex justify-end gap-2 pt-2">
+                    <button type="button" id="cancelAddLinkBtn"
+                        class="px-4 py-2 text-xs font-medium bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-700 rounded-xl transition-colors">
+                        Cancel
+                    </button>
+                    <button type="submit"
+                        class="px-4 py-2 text-xs font-medium bg-blue-600 hover:bg-blue-700 text-white rounded-xl shadow-sm transition-colors">
+                        Add Shortcut
+                    </button>
                 </div>
             </form>
         </div>
     </div>
 
-    <div id="confirmModal" class="modal fixed inset-0 flex items-center justify-center hidden z-50 p-4">
-        <div class="modal-content p-4 sm:p-6 rounded-lg shadow-xl w-full">
-            <h3 id="confirmModalTitle" class="text-base sm:text-lg font-semibold mb-3 sm:mb-4 text-gray-900 dark:text-gray-100">Confirm</h3>
-            <p id="confirmModalMessage" class="text-sm text-gray-700 dark:text-gray-300 mb-4">Are you sure?</p>
-            <div class="flex justify-end space-x-2">
-                <button type="button" id="confirmModalCancelBtn" class="px-3 py-2 sm:px-4 text-xs sm:text-sm bg-gray-300 text-gray-700 hover:bg-gray-400 dark:bg-gray-600 dark:text-gray-200 dark:hover:bg-gray-500 rounded-md">Cancel</button>
-                <button type="button" id="confirmModalConfirmBtn" class="px-3 py-2 sm:px-4 text-xs sm:text-sm bg-red-500 text-white hover:bg-red-600 dark:bg-red-600 dark:hover:bg-red-700 rounded-md">Confirm</button>
+    <!-- Confirm Delete Modal -->
+    <div id="confirmModal" class="fixed inset-0 bg-slate-950/60 backdrop-blur-xs flex items-center justify-center hidden z-50 p-4">
+        <div class="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl p-6 shadow-xl max-w-sm w-full">
+            <div class="flex items-center gap-3 mb-3">
+                <div class="w-9 h-9 rounded-xl bg-red-100 dark:bg-red-950/60 text-red-600 dark:text-red-400 flex items-center justify-center shrink-0">
+                    <i class="fas fa-trash-can text-sm"></i>
+                </div>
+                <h3 class="text-base font-semibold text-slate-900 dark:text-white">Remove Shortcut</h3>
+            </div>
+
+            <p id="confirmModalMessage" class="text-sm text-slate-600 dark:text-slate-300 mb-5">
+                Are you sure you want to delete this shortcut?
+            </p>
+
+            <div class="flex justify-end gap-2">
+                <button type="button" id="confirmModalCancelBtn"
+                    class="px-4 py-2 text-xs font-medium bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-700 rounded-xl transition-colors">
+                    Cancel
+                </button>
+                <button type="button" id="confirmModalConfirmBtn"
+                    class="px-4 py-2 text-xs font-medium bg-red-600 hover:bg-red-700 text-white rounded-xl shadow-sm transition-colors">
+                    Delete
+                </button>
             </div>
         </div>
     </div>
 
     <script>
-        const quickLinksGrid = document.getElementById('quickLinksGrid');
-        const addLinkModal = document.getElementById('addLinkModal');
-        const addLinkForm = document.getElementById('addLinkForm');
-        const cancelAddLinkBtn = document.getElementById('cancelAddLinkBtn');
-        const linkNameInput = document.getElementById('linkName');
-        const linkUrlInput = document.getElementById('linkUrl');
+        /**
+         * Storage Keys (Preserving original keys for backward compatibility)
+         */
+        const STORAGE_KEYS = {
+            DARK_MODE: 'darkMode',
+            QUICK_LINKS: 'customHomepageLinks',
+            NOTES: 'customHomepageNotes',
+            WEATHER_LOCATION: 'customHomepageWeatherLocation',
+            WEATHER_UNIT: 'customHomepageWeatherUnit',
+            CLOCK_24H: 'customHomepageClock24h'
+        };
+
+        /**
+         * Application State
+         */
+        let quickLinks = [];
+        let draggedItem = null;
+        let confirmCallback = null;
+        let use24HourClock = localStorage.getItem(STORAGE_KEYS.CLOCK_24H) !== 'false';
+        let tempUnit = localStorage.getItem(STORAGE_KEYS.WEATHER_UNIT) || 'celsius'; // 'celsius' | 'fahrenheit'
+        let currentWeatherLocation = null;
+        let searchDebounceTimer = null;
+
+        /**
+         * DOM Elements
+         */
+        const htmlElement = document.documentElement;
+        const darkModeToggle = document.getElementById('darkModeToggle');
+        const searchInput = document.getElementById('searchInput');
+        const greetingText = document.getElementById('greetingText');
+
+        // Clock Elements
         const timeDisplay = document.getElementById('timeDisplay');
         const dateDisplay = document.getElementById('dateDisplay');
+        const timezoneDisplay = document.getElementById('timezoneDisplay');
+        const timeFormatToggle = document.getElementById('timeFormatToggle');
+
+        // Weather Elements
+        const weatherLocationName = document.getElementById('weatherLocationName');
+        const weatherTemp = document.getElementById('weatherTemp');
+        const weatherHighLow = document.getElementById('weatherHighLow');
+        const weatherConditionText = document.getElementById('weatherConditionText');
+        const weatherIconContainer = document.getElementById('weatherIconContainer');
+        const weatherHumidity = document.getElementById('weatherHumidity');
+        const weatherWind = document.getElementById('weatherWind');
+        const tempUnitToggle = document.getElementById('tempUnitToggle');
+        const refreshWeatherBtn = document.getElementById('refreshWeatherBtn');
+        const openWeatherSearchBtn = document.getElementById('openWeatherSearchBtn');
+        const closeWeatherSearchBtn = document.getElementById('closeWeatherSearchBtn');
+        const weatherSearchOverlay = document.getElementById('weatherSearchOverlay');
+        const weatherCityInput = document.getElementById('weatherCityInput');
+        const weatherSearchResults = document.getElementById('weatherSearchResults');
+        const useGeolocationBtn = document.getElementById('useGeolocationBtn');
+
+        // Notes Elements
         const notesTextArea = document.getElementById('notesTextArea');
         const saveNotesBtn = document.getElementById('saveNotesBtn');
-        const darkModeToggle = document.getElementById('darkModeToggle'); 
-        const htmlElement = document.documentElement;
-        
         const noteProcessingStatus = document.getElementById('noteProcessingStatus');
 
+        // Quick Links & Modals
+        const quickLinksGrid = document.getElementById('quickLinksGrid');
+        const headerAddLinkBtn = document.getElementById('headerAddLinkBtn');
+        const addLinkModal = document.getElementById('addLinkModal');
+        const addLinkForm = document.getElementById('addLinkForm');
+        const linkNameInput = document.getElementById('linkName');
+        const linkUrlInput = document.getElementById('linkUrl');
+        const addLinkError = document.getElementById('addLinkError');
+        const cancelAddLinkBtn = document.getElementById('cancelAddLinkBtn');
+        const closeAddLinkIconBtn = document.getElementById('closeAddLinkIconBtn');
+
         const confirmModal = document.getElementById('confirmModal');
-        const confirmModalTitle = document.getElementById('confirmModalTitle');
         const confirmModalMessage = document.getElementById('confirmModalMessage');
         const confirmModalCancelBtn = document.getElementById('confirmModalCancelBtn');
         const confirmModalConfirmBtn = document.getElementById('confirmModalConfirmBtn');
-        let confirmCallback = null;
 
-        let quickLinks = [];
-        const QUICK_LINKS_STORAGE_KEY = 'customHomepageLinks';
-        const NOTES_STORAGE_KEY = 'customHomepageNotes';
-        let clockInterval = null;
-        let draggedItem = null;
-
-        console.log('Script start: darkModeToggle element:', darkModeToggle);
-
-        function showConfirmModal(message, onConfirm) {
-            if(confirmModalMessage) confirmModalMessage.textContent = message;
-            confirmCallback = onConfirm;
-            if(confirmModal) confirmModal.classList.remove('hidden');
-        }
-
-        function hideConfirmModal() {
-            if(confirmModal) confirmModal.classList.add('hidden');
-            confirmCallback = null;
-        }
-
-        if (confirmModalCancelBtn) {
-            confirmModalCancelBtn.addEventListener('click', hideConfirmModal);
-        }
-        if (confirmModalConfirmBtn) {
-            confirmModalConfirmBtn.addEventListener('click', () => {
-                if (typeof confirmCallback === 'function') {
-                    confirmCallback();
-                }
-                hideConfirmModal();
-            });
-        }
-        if (confirmModal) {
-            confirmModal.addEventListener('click', (e) => {
-                if (e.target === confirmModal) {
-                    hideConfirmModal();
-                }
-            });
-        }
-        
+        /* ==========================================================================
+           1. THEME MANAGEMENT (Dark / Light Mode)
+           ========================================================================== */
         function applyDarkMode(isDark) {
-            console.log(`Applying theme: ${isDark ? 'Dark' : 'Light'}`);
-            if (!htmlElement) {
-                console.error("htmlElement is null in applyDarkMode");
-                return;
-            }
-            console.log('HTML classes BEFORE applyDarkMode:', htmlElement.className);
             if (isDark) {
                 htmlElement.classList.add('dark');
-                if(darkModeToggle) darkModeToggle.innerHTML = '<i class="fas fa-sun text-yellow-400"></i>';
+                darkModeToggle.innerHTML = '<i class="fas fa-sun text-amber-400 text-base"></i>';
             } else {
                 htmlElement.classList.remove('dark');
-                if(darkModeToggle) darkModeToggle.innerHTML = '<i class="fas fa-moon text-gray-700 dark:text-gray-300"></i>';
+                darkModeToggle.innerHTML = '<i class="fas fa-moon text-slate-600 text-base"></i>';
             }
-            console.log('HTML classes AFTER applyDarkMode:', htmlElement.className);
-            updateWeatherWidgetTheme(isDark);
         }
 
         function toggleDarkMode() {
-            if (!htmlElement) {
-                console.error("htmlElement is null in toggleDarkMode");
+            const isCurrentlyDark = htmlElement.classList.contains('dark');
+            const nextState = !isCurrentlyDark;
+            localStorage.setItem(STORAGE_KEYS.DARK_MODE, String(nextState));
+            applyDarkMode(nextState);
+        }
+
+        function initTheme() {
+            const stored = localStorage.getItem(STORAGE_KEYS.DARK_MODE);
+            if (stored !== null) {
+                applyDarkMode(stored === 'true');
+            } else {
+                const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+                applyDarkMode(prefersDark);
+            }
+        }
+
+        /* ==========================================================================
+           2. CLOCK & GREETING WIDGET
+           ========================================================================== */
+        function updateClock() {
+            const now = new Date();
+            const hours24 = now.getHours();
+
+            // Greeting based on time of day
+            if (hours24 < 12) {
+                greetingText.textContent = 'Good morning';
+            } else if (hours24 < 18) {
+                greetingText.textContent = 'Good afternoon';
+            } else {
+                greetingText.textContent = 'Good evening';
+            }
+
+            // Format Time
+            const timeOptions = {
+                hour: '2-digit',
+                minute: '2-digit',
+                second: '2-digit',
+                hour12: !use24HourClock
+            };
+            timeDisplay.textContent = now.toLocaleTimeString([], timeOptions);
+
+            // Format Date
+            const dateOptions = {
+                weekday: 'long',
+                year: 'numeric',
+                month: 'long',
+                day: 'numeric'
+            };
+            dateDisplay.textContent = now.toLocaleDateString(navigator.language || 'en-US', dateOptions);
+        }
+
+        function initClock() {
+            timeFormatToggle.textContent = use24HourClock ? '24H' : '12H';
+            try {
+                const tz = Intl.DateTimeFormat().resolvedOptions().timeZone;
+                timezoneDisplay.textContent = tz ? tz.replace(/_/g, ' ') : 'Local Timezone';
+            } catch {
+                timezoneDisplay.textContent = 'Local Timezone';
+            }
+
+            updateClock();
+            setInterval(updateClock, 1000);
+
+            timeFormatToggle.addEventListener('click', () => {
+                use24HourClock = !use24HourClock;
+                localStorage.setItem(STORAGE_KEYS.CLOCK_24H, String(use24HourClock));
+                timeFormatToggle.textContent = use24HourClock ? '24H' : '12H';
+                updateClock();
+            });
+        }
+
+        /* ==========================================================================
+           3. USER-SELECTABLE WEATHER WIDGET (Open-Meteo API)
+           ========================================================================== */
+        // Map WMO Weather interpretation codes to descriptions and FontAwesome icons
+        function getWeatherMeta(code) {
+            const map = {
+                0:  { label: 'Clear sky', icon: 'fa-sun text-amber-400' },
+                1:  { label: 'Mainly clear', icon: 'fa-cloud-sun text-amber-400' },
+                2:  { label: 'Partly cloudy', icon: 'fa-cloud-sun text-blue-400' },
+                3:  { label: 'Overcast', icon: 'fa-cloud text-slate-400' },
+                45: { label: 'Foggy', icon: 'fa-smog text-slate-400' },
+                48: { label: 'Rime fog', icon: 'fa-smog text-slate-400' },
+                51: { label: 'Light drizzle', icon: 'fa-cloud-rain text-blue-400' },
+                53: { label: 'Moderate drizzle', icon: 'fa-cloud-rain text-blue-500' },
+                55: { label: 'Dense drizzle', icon: 'fa-cloud-showers-heavy text-blue-500' },
+                61: { label: 'Slight rain', icon: 'fa-cloud-rain text-blue-400' },
+                63: { label: 'Moderate rain', icon: 'fa-cloud-showers-heavy text-blue-500' },
+                65: { label: 'Heavy rain', icon: 'fa-cloud-showers-heavy text-blue-600' },
+                71: { label: 'Slight snow', icon: 'fa-snowflake text-sky-300' },
+                73: { label: 'Moderate snow', icon: 'fa-snowflake text-sky-400' },
+                75: { label: 'Heavy snow', icon: 'fa-snowflake text-sky-500' },
+                77: { label: 'Snow grains', icon: 'fa-snowflake text-sky-300' },
+                80: { label: 'Rain showers', icon: 'fa-cloud-sun-rain text-blue-400' },
+                81: { label: 'Moderate showers', icon: 'fa-cloud-showers-heavy text-blue-500' },
+                82: { label: 'Violent showers', icon: 'fa-cloud-showers-heavy text-blue-600' },
+                85: { label: 'Snow showers', icon: 'fa-snowflake text-sky-400' },
+                86: { label: 'Heavy snow showers', icon: 'fa-snowflake text-sky-500' },
+                95: { label: 'Thunderstorm', icon: 'fa-cloud-bolt text-amber-500' },
+                96: { label: 'Thunderstorm & hail', icon: 'fa-cloud-bolt text-amber-500' },
+                99: { label: 'Severe thunderstorm', icon: 'fa-cloud-bolt text-red-500' }
+            };
+            return map[code] || { label: 'Moderate conditions', icon: 'fa-cloud-sun text-blue-500' };
+        }
+
+        function loadSavedWeatherLocation() {
+            const raw = localStorage.getItem(STORAGE_KEYS.WEATHER_LOCATION);
+            if (raw) {
+                try {
+                    const parsed = JSON.parse(raw);
+                    if (parsed && typeof parsed.latitude === 'number' && typeof parsed.longitude === 'number') {
+                        return parsed;
+                    }
+                } catch {
+                    // Fallback below if corrupted
+                }
+            }
+            // Sensible default location (Montreal, Canada) - user can change anytime
+            return {
+                name: 'Montreal',
+                admin1: 'Quebec',
+                country: 'Canada',
+                latitude: 45.5088,
+                longitude: -73.5878
+            };
+        }
+
+        function saveWeatherLocation(loc) {
+            currentWeatherLocation = loc;
+            localStorage.setItem(STORAGE_KEYS.WEATHER_LOCATION, JSON.stringify(loc));
+        }
+
+        async function fetchWeatherForCurrentLocation() {
+            if (!currentWeatherLocation) return;
+
+            const { name, country, latitude, longitude } = currentWeatherLocation;
+            const displayLabel = country ? `${name}, ${country}` : name;
+            weatherLocationName.textContent = displayLabel;
+            tempUnitToggle.textContent = tempUnit === 'fahrenheit' ? '°F' : '°C';
+
+            const refreshIcon = refreshWeatherBtn.querySelector('i');
+            refreshIcon.classList.add('fa-spin');
+
+            try {
+                const unitParam = tempUnit === 'fahrenheit' ? '&temperature_unit=fahrenheit' : '';
+                const url = `https://api.open-meteo.com/v1/forecast?latitude=${encodeURIComponent(latitude)}&longitude=${encodeURIComponent(longitude)}&current=temperature_2m,relative_humidity_2m,weather_code,wind_speed_10m&daily=temperature_2m_max,temperature_2m_min&timezone=auto${unitParam}`;
+
+                const response = await fetch(url);
+                if (!response.ok) throw new Error('Weather fetch failed');
+                const data = await response.json();
+
+                const current = data.current;
+                const daily = data.daily;
+                const unitSymbol = tempUnit === 'fahrenheit' ? '°F' : '°C';
+
+                const temp = Math.round(current.temperature_2m);
+                const high = daily?.temperature_2m_max?.[0] !== undefined ? Math.round(daily.temperature_2m_max[0]) : '--';
+                const low = daily?.temperature_2m_min?.[0] !== undefined ? Math.round(daily.temperature_2m_min[0]) : '--';
+                const meta = getWeatherMeta(current.weather_code);
+
+                weatherTemp.textContent = `${temp}${unitSymbol}`;
+                weatherHighLow.textContent = `H:${high}° L:${low}°`;
+                weatherConditionText.textContent = meta.label;
+                weatherIconContainer.innerHTML = `<i class="fas ${meta.icon}"></i>`;
+                weatherHumidity.textContent = `${current.relative_humidity_2m}%`;
+                weatherWind.textContent = `${Math.round(current.wind_speed_10m)} km/h`;
+            } catch {
+                weatherConditionText.textContent = 'Unable to load weather';
+            } finally {
+                refreshIcon.classList.remove('fa-spin');
+            }
+        }
+
+        async function searchCities(query) {
+            const trimmed = query.trim();
+            if (trimmed.length < 2) {
+                weatherSearchResults.innerHTML = '<p class="text-slate-400 dark:text-slate-500 py-3 text-center">Type at least 2 characters...</p>';
                 return;
             }
-            const isCurrentlyDark = htmlElement.classList.contains('dark');
-            console.log(`Toggling. Currently dark: ${isCurrentlyDark}. New state will be: ${!isCurrentlyDark ? 'Dark' : 'Light'}`);
-            localStorage.setItem('darkMode', !isCurrentlyDark ? 'true' : 'false');
-            applyDarkMode(!isCurrentlyDark);
+
+            weatherSearchResults.innerHTML = '<p class="text-slate-400 dark:text-slate-500 py-3 text-center"><i class="fas fa-spinner fa-spin mr-1"></i> Searching cities...</p>';
+
+            try {
+                const url = `https://geocoding-api.open-meteo.com/v1/search?name=${encodeURIComponent(trimmed)}&count=6&language=en&format=json`;
+                const response = await fetch(url);
+                if (!response.ok) throw new Error('Geocoding error');
+                const data = await response.json();
+
+                if (!data.results || data.results.length === 0) {
+                    weatherSearchResults.innerHTML = '<p class="text-slate-400 dark:text-slate-500 py-3 text-center">No matching cities found.</p>';
+                    return;
+                }
+
+                weatherSearchResults.innerHTML = '';
+                data.results.forEach(item => {
+                    const btn = document.createElement('button');
+                    btn.type = 'button';
+                    btn.className = 'w-full text-left px-2.5 py-2 hover:bg-blue-50 dark:hover:bg-slate-800 rounded-lg transition-colors flex items-center justify-between group';
+
+                    const regionParts = [item.admin1, item.country].filter(Boolean).join(', ');
+                    btn.innerHTML = `
+                        <div class="truncate pr-2">
+                            <span class="font-medium text-slate-800 dark:text-slate-100 group-hover:text-blue-600 dark:group-hover:text-blue-400">${item.name}</span>
+                            ${regionParts ? `<span class="text-slate-400 dark:text-slate-500 ml-1">(${regionParts})</span>` : ''}
+                        </div>
+                        <i class="fas fa-arrow-right text-[10px] text-slate-300 group-hover:text-blue-500 shrink-0"></i>
+                    `;
+
+                    btn.addEventListener('click', () => {
+                        saveWeatherLocation({
+                            name: item.name,
+                            admin1: item.admin1 || '',
+                            country: item.country || '',
+                            latitude: item.latitude,
+                            longitude: item.longitude
+                        });
+                        closeWeatherSearch();
+                        fetchWeatherForCurrentLocation();
+                    });
+
+                    weatherSearchResults.appendChild(btn);
+                });
+            } catch {
+                weatherSearchResults.innerHTML = '<p class="text-red-500 py-3 text-center">Error searching cities. Try again.</p>';
+            }
         }
 
-        function loadDarkModePreference() {
-            const storedPreference = localStorage.getItem('darkMode');
-            console.log(`Loading preference. Stored in localStorage: '${storedPreference}'`);
-            const prefersDark = storedPreference === 'true';
-            console.log(`Interpreted 'prefersDark' as: ${prefersDark}`);
-            applyDarkMode(prefersDark);
+        function openWeatherSearch() {
+            weatherSearchOverlay.classList.remove('hidden');
+            weatherCityInput.value = '';
+            weatherSearchResults.innerHTML = '<p class="text-slate-400 dark:text-slate-500 py-3 text-center">Search any city worldwide...</p>';
+            weatherCityInput.focus();
         }
 
+        function closeWeatherSearch() {
+            weatherSearchOverlay.classList.add('hidden');
+        }
+
+        function handleGeolocationWeather() {
+            if (!navigator.geolocation) {
+                weatherSearchResults.innerHTML = '<p class="text-red-500 py-3 text-center">Geolocation is not supported by your browser.</p>';
+                return;
+            }
+
+            weatherSearchResults.innerHTML = '<p class="text-slate-400 dark:text-slate-500 py-3 text-center"><i class="fas fa-spinner fa-spin mr-1"></i> Detecting your coordinates...</p>';
+
+            navigator.geolocation.getCurrentPosition(
+                (position) => {
+                    const { latitude, longitude } = position.coords;
+                    saveWeatherLocation({
+                        name: 'Current Location',
+                        admin1: '',
+                        country: '',
+                        latitude,
+                        longitude
+                    });
+                    closeWeatherSearch();
+                    fetchWeatherForCurrentLocation();
+                },
+                () => {
+                    weatherSearchResults.innerHTML = '<p class="text-red-500 py-3 text-center">Location access denied. Please search by city name.</p>';
+                }
+            );
+        }
+
+        function initWeather() {
+            currentWeatherLocation = loadSavedWeatherLocation();
+            fetchWeatherForCurrentLocation();
+
+            openWeatherSearchBtn.addEventListener('click', openWeatherSearch);
+            closeWeatherSearchBtn.addEventListener('click', closeWeatherSearch);
+            refreshWeatherBtn.addEventListener('click', fetchWeatherForCurrentLocation);
+            useGeolocationBtn.addEventListener('click', handleGeolocationWeather);
+
+            tempUnitToggle.addEventListener('click', () => {
+                tempUnit = tempUnit === 'celsius' ? 'fahrenheit' : 'celsius';
+                localStorage.setItem(STORAGE_KEYS.WEATHER_UNIT, tempUnit);
+                fetchWeatherForCurrentLocation();
+            });
+
+            weatherCityInput.addEventListener('input', (e) => {
+                clearTimeout(searchDebounceTimer);
+                searchDebounceTimer = setTimeout(() => {
+                    searchCities(e.target.value);
+                }, 280);
+            });
+        }
+
+        /* ==========================================================================
+           4. QUICK NOTES WIDGET
+           ========================================================================== */
+        function showNoteStatus(text) {
+            noteProcessingStatus.textContent = text;
+            setTimeout(() => {
+                if (noteProcessingStatus.textContent === text) {
+                    noteProcessingStatus.textContent = '';
+                }
+            }, 2000);
+        }
+
+        function initNotes() {
+            const savedNotes = localStorage.getItem(STORAGE_KEYS.NOTES);
+            if (savedNotes !== null) {
+                notesTextArea.value = savedNotes;
+            }
+
+            // Auto-save on input with subtle feedback
+            let noteTimer = null;
+            notesTextArea.addEventListener('input', () => {
+                clearTimeout(noteTimer);
+                noteTimer = setTimeout(() => {
+                    localStorage.setItem(STORAGE_KEYS.NOTES, notesTextArea.value);
+                    showNoteStatus('Auto-saved');
+                }, 600);
+            });
+
+            // Explicit Save button
+            saveNotesBtn.addEventListener('click', () => {
+                localStorage.setItem(STORAGE_KEYS.NOTES, notesTextArea.value);
+                showNoteStatus('Saved!');
+            });
+        }
+
+        /* ==========================================================================
+           5. QUICK LINKS & DRAG-AND-DROP
+           ========================================================================== */
         function loadLinks() {
-            const storedLinks = localStorage.getItem(QUICK_LINKS_STORAGE_KEY);
+            const storedLinks = localStorage.getItem(STORAGE_KEYS.QUICK_LINKS);
             if (storedLinks) {
                 try {
-                    quickLinks = JSON.parse(storedLinks);
-                    if (!Array.isArray(quickLinks)) { quickLinks = []; }
-                } catch (e) { quickLinks = []; console.error("Error parsing links:", e); } // Translated console
+                    const parsed = JSON.parse(storedLinks);
+                    quickLinks = Array.isArray(parsed) ? parsed : [];
+                } catch {
+                    quickLinks = [];
+                }
             } else {
-                quickLinks = [ // Default links
-                    { name: "Google", url: "https://www.google.com" },
-                    { name: "YouTube", url: "https://www.youtube.com" }, 
-                    { name: "Wikipedia", url: "https://www.wikipedia.org" } // Translated
+                quickLinks = [
+                    { name: 'Google', url: 'https://www.google.com' },
+                    { name: 'YouTube', url: 'https://www.youtube.com' },
+                    { name: 'Wikipedia', url: 'https://www.wikipedia.org' },
+                    { name: 'GitHub', url: 'https://github.com' }
                 ];
                 saveLinks();
             }
@@ -541,37 +777,28 @@
         }
 
         function saveLinks() {
-            try {
-                localStorage.setItem(QUICK_LINKS_STORAGE_KEY, JSON.stringify(quickLinks));
-            } catch (e) { 
-                console.error("Error saving links:", e); // Translated console
-                if(noteProcessingStatus) {
-                    noteProcessingStatus.textContent = "Error saving links to local storage."; // Already English
-                    setTimeout(() => { if(noteProcessingStatus) noteProcessingStatus.textContent = ''; }, 3000);
-                }
-            }
+            localStorage.setItem(STORAGE_KEYS.QUICK_LINKS, JSON.stringify(quickLinks));
         }
 
         function renderLinks() {
-            if (!quickLinksGrid) return;
             quickLinksGrid.innerHTML = '';
             quickLinks.forEach((link, index) => {
-                const linkElement = createLinkElement(link, index);
-                quickLinksGrid.appendChild(linkElement);
+                quickLinksGrid.appendChild(createLinkElement(link, index));
             });
-            const addButtonElement = createAddButtonElement();
-            quickLinksGrid.appendChild(addButtonElement);
+            quickLinksGrid.appendChild(createAddTileButton());
         }
 
         function createLinkElement(link, index) {
             const a = document.createElement('a');
             a.href = link.url;
-            a.className = 'quick-link group'; 
-            a.title = `${link.name}\n${link.url}`;
-            a.target = "_blank"; a.rel = "noopener noreferrer";
+            a.target = '_blank';
+            a.rel = 'noopener noreferrer';
             a.draggable = true;
             a.dataset.index = index;
+            a.title = `${link.name}\n${link.url}`;
+            a.className = 'quick-link group relative flex flex-col items-center justify-center p-3.5 bg-slate-50/70 dark:bg-slate-800/50 hover:bg-white dark:hover:bg-slate-800 border border-slate-200/80 dark:border-slate-800 hover:border-slate-300 dark:hover:border-slate-700 rounded-2xl shadow-2xs hover:shadow-md transition-all aspect-square cursor-grab active:cursor-grabbing select-none';
 
+            // Drag & Drop Listeners
             a.addEventListener('dragstart', handleDragStart);
             a.addEventListener('dragend', handleDragEnd);
             a.addEventListener('dragover', handleDragOver);
@@ -579,101 +806,113 @@
             a.addEventListener('dragleave', handleDragLeave);
             a.addEventListener('drop', handleDrop);
 
-            const faviconContainer = document.createElement('div');
-            faviconContainer.className = 'default-favicon-container'; 
-            const img = document.createElement('img');
-            let domainForFavicon = link.url;
+            // Favicon wrapper
+            const iconBox = document.createElement('div');
+            iconBox.className = 'w-10 h-10 mb-2 rounded-xl bg-white dark:bg-slate-900 border border-slate-100 dark:border-slate-800 flex items-center justify-center shadow-2xs pointer-events-none overflow-hidden';
+
+            let domain = link.url;
             try {
-                domainForFavicon = new URL(link.url).hostname;
-            } catch (e) {
-                console.warn("Could not parse URL for favicon, using full URL:", link.url);
+                domain = new URL(link.url).hostname;
+            } catch {
+                // Keep raw URL if hostname parsing fails
             }
-            const faviconUrl = `https://www.google.com/s2/favicons?domain=${encodeURIComponent(domainForFavicon)}&sz=32`;
-            img.src = faviconUrl;
-            img.alt = `Favicon for ${link.name}`;
-            img.className = 'favicon';
+
+            const img = document.createElement('img');
+            img.src = `https://www.google.com/s2/favicons?domain=${encodeURIComponent(domain)}&sz=64`;
+            img.alt = link.name;
+            img.className = 'w-6 h-6 object-contain';
             img.loading = 'lazy';
-            img.onerror = function() {
-                this.onerror = null; 
-                this.style.display = 'none'; 
-                const defaultIcon = document.createElement('i');
-                defaultIcon.className = 'fas fa-link text-lg'; 
-                faviconContainer.innerHTML = ''; 
-                faviconContainer.appendChild(defaultIcon);
+            img.onerror = function () {
+                this.remove();
+                iconBox.innerHTML = '<i class="fas fa-globe text-slate-400 text-base"></i>';
             };
-            faviconContainer.appendChild(img);
-            a.appendChild(faviconContainer);
 
-            const nameSpan = document.createElement('span');
-            nameSpan.className = 'link-name';
-            nameSpan.textContent = link.name;
-            a.appendChild(nameSpan);
+            iconBox.appendChild(img);
+            a.appendChild(iconBox);
 
-            const deleteBtn = document.createElement('button');
-            deleteBtn.className = 'delete-link-btn';
-            deleteBtn.innerHTML = '<i class="fas fa-times"></i>';
-            deleteBtn.title = 'Delete this link'; // Translated
-            deleteBtn.onclick = (e) => {
-                e.preventDefault(); e.stopPropagation();
-                if (!quickLinksGrid) return;
-                const currentLinksElements = Array.from(quickLinksGrid.querySelectorAll('.quick-link'));
-                const clickedIndex = currentLinksElements.indexOf(a);
-                deleteLink(clickedIndex);
-            };
-            a.appendChild(deleteBtn);
+            // Label
+            const label = document.createElement('span');
+            label.className = 'text-xs font-medium text-slate-700 dark:text-slate-200 truncate w-full text-center pointer-events-none';
+            label.textContent = link.name;
+            a.appendChild(label);
+
+            // Delete Button
+            const delBtn = document.createElement('button');
+            delBtn.type = 'button';
+            delBtn.title = `Remove ${link.name}`;
+            delBtn.className = ' absolute top-1.5 right-1.5 w-6 h-6 rounded-full bg-slate-200/80 dark:bg-slate-700/80 hover:bg-red-500 hover:text-white text-slate-500 dark:text-slate-300 flex items-center justify-center text-[10px] opacity-0 group-hover:opacity-100 focus:opacity-100 transition-all z-10';
+            delBtn.innerHTML = '<i class="fas fa-times"></i>';
+            delBtn.addEventListener('click', (e) => {
+                e.preventDefault();
+                e.stopPropagation();
+                promptDeleteLink(index);
+            });
+            a.appendChild(delBtn);
 
             return a;
         }
 
-        function createAddButtonElement() {
-            const button = document.createElement('button');
-            button.id = 'addLinkBtn';
-            button.className = 'add-link-button'; 
-            button.title = 'Add a new link'; // Translated
-            button.innerHTML = `<i class="fas fa-plus"></i><span>Add</span>`; // Translated
-            button.addEventListener('click', openAddLinkModal);
-            return button;
+        function createAddTileButton() {
+            const btn = document.createElement('button');
+            btn.type = 'button';
+            btn.title = 'Add a new shortcut';
+            btn.className = 'flex flex-col items-center justify-center p-3.5 border-2 border-dashed border-slate-200 dark:border-slate-800 hover:border-blue-500 dark:hover:border-blue-500 bg-transparent hover:bg-blue-50/30 dark:hover:bg-blue-950/20 text-slate-400 hover:text-blue-600 dark:hover:text-blue-400 rounded-2xl transition-all aspect-square cursor-pointer';
+            btn.innerHTML = `
+                <div class="w-10 h-10 mb-2 rounded-xl bg-slate-100 dark:bg-slate-800/80 flex items-center justify-center">
+                    <i class="fas fa-plus text-sm"></i>
+                </div>
+                <span class="text-xs font-medium">Add New</span>
+            `;
+            btn.addEventListener('click', openAddLinkModal);
+            return btn;
         }
 
-        function formatUrl(inputUrl) {
-            let url = inputUrl.trim();
-            if (!url) return null;
-            if (!/^(?:f|ht)tps?:\/\//i.test(url)) {
-                url = 'https://' + url;
+        function formatValidUrl(rawUrl) {
+            let clean = rawUrl.trim();
+            if (!clean) return null;
+            if (!/^(?:f|ht)tps?:\/\//i.test(clean)) {
+                clean = 'https://' + clean;
             }
             try {
-                new URL(url); 
-            } catch (e) {
-                console.warn("Invalid URL after formatting:", url, e);
-                if(noteProcessingStatus) {
-                    noteProcessingStatus.textContent = "Invalid URL: " + inputUrl; // Translated
-                    setTimeout(() => { if(noteProcessingStatus) noteProcessingStatus.textContent = ''; }, 3000);
-                }
+                new URL(clean);
+                return clean;
+            } catch {
                 return null;
             }
-            return url;
         }
 
-        function addLink(name, rawUrl) {
-            const formattedUrl = formatUrl(rawUrl);
+        function openAddLinkModal() {
+            addLinkForm.reset();
+            addLinkError.classList.add('hidden');
+            addLinkModal.classList.remove('hidden');
+            linkNameInput.focus();
+        }
 
-            if (!formattedUrl) { 
+        function closeAddLinkModal() {
+            addLinkModal.classList.add('hidden');
+        }
+
+        function handleAddLinkSubmit(e) {
+            e.preventDefault();
+            const name = linkNameInput.value.trim();
+            const formattedUrl = formatValidUrl(linkUrlInput.value);
+
+            if (!name) {
+                addLinkError.textContent = 'Please provide a site name.';
+                addLinkError.classList.remove('hidden');
                 return;
             }
-             if (!name) {
-                if(noteProcessingStatus) {
-                    noteProcessingStatus.textContent = "Site name is required."; // Translated
-                    setTimeout(() => { if(noteProcessingStatus) noteProcessingStatus.textContent = ''; }, 3000);
-                }
+
+            if (!formattedUrl) {
+                addLinkError.textContent = 'Please enter a valid URL (e.g. example.com).';
+                addLinkError.classList.remove('hidden');
                 return;
             }
 
-            if (quickLinks.some(link => link.url === formattedUrl)) {
-                 if(noteProcessingStatus) {
-                    noteProcessingStatus.textContent = "This link already exists!"; // Translated
-                    setTimeout(() => { if(noteProcessingStatus) noteProcessingStatus.textContent = ''; }, 3000);
-                 }
-                 return;
+            if (quickLinks.some(item => item.url.toLowerCase() === formattedUrl.toLowerCase())) {
+                addLinkError.textContent = 'This shortcut already exists.';
+                addLinkError.classList.remove('hidden');
+                return;
             }
 
             quickLinks.push({ name, url: formattedUrl });
@@ -682,41 +921,34 @@
             closeAddLinkModal();
         }
 
-        function deleteLink(index) {
-            if (index >= 0 && index < quickLinks.length) {
-                const linkToDelete = quickLinks[index];
-                showConfirmModal(`Are you sure you want to delete the link "${linkToDelete.name}"?`, () => { // Translated
-                    quickLinks.splice(index, 1);
-                    saveLinks();
-                    renderLinks();
-                });
-            } else { console.error("Invalid delete index:", index); } // Translated console
+        function promptDeleteLink(index) {
+            const target = quickLinks[index];
+            if (!target) return;
+            confirmModalMessage.textContent = `Are you sure you want to remove "${target.name}" from your Quick Links?`;
+            confirmCallback = () => {
+                quickLinks.splice(index, 1);
+                saveLinks();
+                renderLinks();
+            };
+            confirmModal.classList.remove('hidden');
         }
 
-        function openAddLinkModal() {
-            if(addLinkForm) addLinkForm.reset(); 
-            if(addLinkModal) addLinkModal.classList.remove('hidden'); 
-            if(linkUrlInput) linkUrlInput.focus();
+        function closeConfirmModal() {
+            confirmModal.classList.add('hidden');
+            confirmCallback = null;
         }
 
-        function closeAddLinkModal() { 
-            if(addLinkModal) addLinkModal.classList.add('hidden'); 
-        }
-
+        // Drag and Drop Handlers
         function handleDragStart(e) {
             draggedItem = this;
             e.dataTransfer.effectAllowed = 'move';
             e.dataTransfer.setData('text/plain', this.dataset.index);
-            setTimeout(() => { if(draggedItem) draggedItem.classList.add('dragging'); }, 0);
+            setTimeout(() => this.classList.add('dragging'), 0);
         }
 
-        function handleDragEnd(e) {
-            if (draggedItem) {
-                 draggedItem.classList.remove('dragging');
-            }
-            if(quickLinksGrid) {
-                quickLinksGrid.querySelectorAll('.quick-link').forEach(item => item.classList.remove('drag-over'));
-            }
+        function handleDragEnd() {
+            this.classList.remove('dragging');
+            quickLinksGrid.querySelectorAll('.quick-link').forEach(el => el.classList.remove('drag-over'));
             draggedItem = null;
         }
 
@@ -733,162 +965,76 @@
             }
         }
 
-        function handleDragLeave(e) {
-             if (this !== draggedItem && this.classList.contains('quick-link')) {
-                 this.classList.remove('drag-over');
-             }
+        function handleDragLeave() {
+            this.classList.remove('drag-over');
         }
 
         function handleDrop(e) {
             e.stopPropagation();
             e.preventDefault();
+            this.classList.remove('drag-over');
 
-            if (!draggedItem || draggedItem === this) {
-                if(this.classList) this.classList.remove('drag-over');
-                return;
-            }
-             if(this.classList) this.classList.remove('drag-over');
+            if (!draggedItem || draggedItem === this) return;
 
-            if(!quickLinksGrid) return;
-            const currentLinksElements = Array.from(quickLinksGrid.querySelectorAll('.quick-link'));
-            const fromIndex = currentLinksElements.indexOf(draggedItem);
-            const toIndex = currentLinksElements.indexOf(this);
+            const items = Array.from(quickLinksGrid.querySelectorAll('.quick-link'));
+            const fromIndex = items.indexOf(draggedItem);
+            const toIndex = items.indexOf(this);
 
             if (fromIndex !== -1 && toIndex !== -1 && fromIndex !== toIndex) {
-                const itemToMove = quickLinks.splice(fromIndex, 1)[0];
-                quickLinks.splice(toIndex, 0, itemToMove);
+                const [moved] = quickLinks.splice(fromIndex, 1);
+                quickLinks.splice(toIndex, 0, moved);
                 saveLinks();
                 renderLinks();
             }
-             if(draggedItem) handleDragEnd.call(draggedItem); 
         }
 
-        function updateClock() {
-            const now = new Date();
-            const hours = String(now.getHours()).padStart(2, '0');
-            const minutes = String(now.getMinutes()).padStart(2, '0');
-            const seconds = String(now.getSeconds()).padStart(2, '0');
-            if(timeDisplay) timeDisplay.textContent = `${hours}:${minutes}:${seconds}`;
-            const optionsDate = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
-            if(dateDisplay) dateDisplay.textContent = now.toLocaleDateString(navigator.language || 'en-US', optionsDate); // Translated
-        }
-
-        function startClock() {
-            if (clockInterval) clearInterval(clockInterval);
-            updateClock();
-            clockInterval = setInterval(updateClock, 1000);
-        }
-
-        function loadNotes() {
-            const savedNotes = localStorage.getItem(NOTES_STORAGE_KEY);
-            if (savedNotes && notesTextArea) { notesTextArea.value = savedNotes; }
-        }
-
-        function saveNotes() {
-            if (!notesTextArea || !saveNotesBtn) return;
-            const notesContent = notesTextArea.value;
-            try {
-                localStorage.setItem(NOTES_STORAGE_KEY, notesContent);
-                const originalIcon = '<i class="fas fa-save mr-1"></i> Save'; // Translated
-                saveNotesBtn.innerHTML = '<i class="fas fa-check mr-1"></i> Saved!'; // Translated
-
-                const blueButtonClasses = ['bg-blue-500', 'hover:bg-blue-600', 'dark:bg-blue-600', 'dark:hover:bg-blue-700'];
-                const greenButtonClasses = ['bg-green-500', 'hover:bg-green-600', 'dark:bg-green-600', 'dark:hover:bg-green-700'];
-
-                saveNotesBtn.classList.remove(...blueButtonClasses);
-                saveNotesBtn.classList.add(...greenButtonClasses);
-
-                setTimeout(() => {
-                    if (saveNotesBtn) {
-                        saveNotesBtn.innerHTML = originalIcon;
-                        saveNotesBtn.classList.remove(...greenButtonClasses);
-                        saveNotesBtn.classList.add(...blueButtonClasses);
-                    }
-                }, 1500);
-            } catch (e) { 
-                console.error("Error saving notes:", e); // Translated console
-                if(noteProcessingStatus) {
-                    noteProcessingStatus.textContent = "Error saving notes."; // Translated
-                    setTimeout(() => { if(noteProcessingStatus) noteProcessingStatus.textContent = ''; }, 3000);
-                }
-            }
-        }
-
-        function loadWeatherWidgetScript() {
-            const existingScript = document.getElementById('weatherwidget-io-js');
-            if (existingScript) {
-                existingScript.remove();
-            }
-            window.weatherwidgetIO = undefined;
-
-            const script = document.createElement('script');
-            script.id = 'weatherwidget-io-js';
-            script.src = 'https://weatherwidget.io/js/widget.min.js';
-            script.async = true;
-            if(document.body) {
-                 document.body.appendChild(script);
-            } else {
-                console.error("Document body not found, cannot append weather widget script.");
-            }
-        }
-
-        function updateWeatherWidgetTheme(isDark) {
-            const weatherWidgetAnchor = document.querySelector('.weatherwidget-io');
-            if (weatherWidgetAnchor) {
-                const newBaseColor = isDark ? '#1f2937' : '#ffffff'; 
-                const newTextColor = isDark ? '#d1d5db' : '#1f2937'; 
-
-                weatherWidgetAnchor.setAttribute('data-basecolor', newBaseColor);
-                weatherWidgetAnchor.setAttribute('data-textcolor', newTextColor);
-                
-                weatherWidgetAnchor.setAttribute('data-highcolor', '#ef4444'); 
-                weatherWidgetAnchor.setAttribute('data-lowcolor', '#3b82f6');
-
-
-                const iframe = weatherWidgetAnchor.querySelector('iframe');
-                if (iframe) {
-                    iframe.remove(); 
-                }
-                while (weatherWidgetAnchor.firstChild && weatherWidgetAnchor.firstChild.tagName !== 'SCRIPT') {
-                     weatherWidgetAnchor.removeChild(weatherWidgetAnchor.firstChild);
-                }
-                loadWeatherWidgetScript(); 
-            }
-        }
-        
-        if (saveNotesBtn) saveNotesBtn.addEventListener('click', saveNotes);
-        
-        if (darkModeToggle) {
-            darkModeToggle.addEventListener('click', toggleDarkMode);
-        } else {
-            console.error("Critical: darkModeToggle element was not found when trying to add click listener.");
-        }
-
-        if (addLinkModal) {
-            addLinkModal.addEventListener('click', (e) => { if (e.target === addLinkModal) closeAddLinkModal(); });
-        }
-        if (cancelAddLinkBtn) cancelAddLinkBtn.addEventListener('click', closeAddLinkModal);
-
-        if (addLinkForm) {
-            addLinkForm.addEventListener('submit', (e) => {
-                e.preventDefault();
-                if(!linkNameInput || !linkUrlInput) return;
-                const name = linkNameInput.value.trim();
-                const url = linkUrlInput.value.trim();
-                addLink(name, url); 
-            });
-        }
-
+        /* ==========================================================================
+           6. INITIALIZATION & GLOBAL LISTENERS
+           ========================================================================== */
         document.addEventListener('DOMContentLoaded', () => {
-            console.log('DOMContentLoaded event fired.');
-            console.log('darkModeToggle in DOMContentLoaded:', document.getElementById('darkModeToggle'));
-            loadDarkModePreference(); 
+            initTheme();
+            initClock();
+            initWeather();
+            initNotes();
             loadLinks();
-            startClock();
-            loadNotes();
+
+            // Theme toggle listener
+            darkModeToggle.addEventListener('click', toggleDarkMode);
+
+            // Modal listeners
+            headerAddLinkBtn.addEventListener('click', openAddLinkModal);
+            cancelAddLinkBtn.addEventListener('click', closeAddLinkModal);
+            closeAddLinkIconBtn.addEventListener('click', closeAddLinkModal);
+            addLinkForm.addEventListener('submit', handleAddLinkSubmit);
+
+            addLinkModal.addEventListener('click', (e) => {
+                if (e.target === addLinkModal) closeAddLinkModal();
+            });
+
+            confirmModalCancelBtn.addEventListener('click', closeConfirmModal);
+            confirmModalConfirmBtn.addEventListener('click', () => {
+                if (typeof confirmCallback === 'function') confirmCallback();
+                closeConfirmModal();
+            });
+            confirmModal.addEventListener('click', (e) => {
+                if (e.target === confirmModal) closeConfirmModal();
+            });
+
+            // Keyboard Shortcuts: '/' to focus search, 'Escape' to close modals/overlays
+            document.addEventListener('keydown', (e) => {
+                const activeTag = document.activeElement ? document.activeElement.tagName.toLowerCase() : '';
+                const isTyping = activeTag === 'input' || activeTag === 'textarea';
+
+                if (e.key === '/' && !isTyping) {
+                    e.preventDefault();
+                    searchInput.focus();
+                } else if (e.key === 'Escape') {
+                    closeAddLinkModal();
+                    closeConfirmModal();
+                    closeWeatherSearch();
+                }
+            });
         });
-
     </script>
-
 </body>
 </html>
